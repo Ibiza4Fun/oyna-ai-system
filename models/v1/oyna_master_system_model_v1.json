@@ -1,0 +1,580 @@
+{
+  "model_version": "oyna_master_system_model_v1",
+  "description": "Master System Model for Øyna Vassverk – fysisk, elektrisk, hydraulisk, I/O, software, kommunikasjon, causal & sikkerhet",
+  "source_documents": {
+    "digital_twin": "oyna_digital_twin_v1.json",
+    "technical_sketches": [
+      "Systemskisse.pdf",
+      "Øyna Vassverk - Teknisk skisse - side 3.pdf",
+      "2025-10-20_Kart for Hovedledningsnett Versjon 2.5.pdf"
+    ],
+    "baselines": [
+      "Baseline v1.docx",
+      "Baseline for digital tvilling v1.docx"
+    ],
+    "electrical": "Full elektro-tegning (enkeltlinjeskjema).docx",
+    "intro": "Introduksjon til Øyna Vassverk.docx",
+    "stack_overview": "HA/NR/Influx – teknisk systemoversikt.docx"
+  },
+
+  "meta": {
+    "site_name": "Øyna Vassverk",
+    "system_type": "hybrid_water_supply_system",
+    "locations": {
+      "pump_house": {
+        "id": "pump_house",
+        "name": "Øyna Pump House",
+        "roles": [
+          "water_production",
+          "buffer_storage",
+          "pressure_boosting",
+          "instrumentation"
+        ]
+      },
+      "backend_site": {
+        "id": "backend_site",
+        "name": "Lillehagveien 99A",
+        "roles": [
+          "compute",
+          "storage",
+          "automation",
+          "visualization"
+        ]
+      }
+    },
+    "stakeholders": [
+      "vassverk_styret",
+      "abonnenter",
+      "driftsansvarlig"
+    ]
+  },
+
+  "physical_layer": {
+    "water_source": {
+      "id": "well_1",
+      "type": "groundwater_well",
+      "connected_pump_id": "pump_p1"
+    },
+    "pumps": [
+      {
+        "id": "pump_p1",
+        "name": "Well Pump P1",
+        "type": "submersible_well_pump",
+        "voltage": "3-phase 230V",
+        "location": "well_1",
+        "functions": ["fill_storage_tank"],
+        "connected_to": ["tank_6000l"],
+        "control_sources": ["legacy_control_cabinet"],
+        "protection_devices": [
+          "motor_protection_q01",
+          "relay_ka2",
+          "level_sensor_p1"
+        ]
+      },
+      {
+        "id": "pump_p2",
+        "name": "Pressure Pump P2",
+        "type": "booster_pump",
+        "voltage": "1-phase 230V",
+        "location": "pump_house_floor",
+        "functions": [
+          "maintain_network_pressure",
+          "pressurize_pressure_tank"
+        ],
+        "connected_to": [
+          "tank_pressure_150l",
+          "flow_meter_sensus_620"
+        ],
+        "control_sources": [
+          "legacy_control_cabinet",
+          "automation_cabinet_new"
+        ],
+        "protection_devices": [
+          "motor_protection_q02",
+          "mechanical_pressure_switch",
+          "level_sensor_p2"
+        ]
+      }
+    ],
+    "tanks": [
+      {
+        "id": "tank_6000l",
+        "name": "Main Storage Tank",
+        "type": "atmospheric_storage_tank",
+        "volume_liters": 6000,
+        "inlet_from": "pump_p1",
+        "outlet_to": "pump_p2",
+        "level_sensors": ["level_sensor_p2"]
+      },
+      {
+        "id": "tank_pressure_150l",
+        "name": "Pressure Tank",
+        "type": "pressure_vessel",
+        "volume_liters": 150,
+        "inlet_from": "pump_p2",
+        "outlet_to": "flow_meter_sensus_620"
+      }
+    ],
+    "flow_measurement": {
+      "id": "flow_meter_sensus_620",
+      "name": "Sensus 620 Main Water Meter",
+      "type": "mechanical_water_meter",
+      "downstream_to": "distribution_network",
+      "pulse_adapter": "pulse_hri_1"
+    },
+    "distribution_network": {
+      "id": "distribution_network",
+      "type": "pipe_network",
+      "pipe_sizes_mm": [32, 40],
+      "subscribers_count": 26,
+      "stop_valves_count": 14,
+      "notes": [
+        "no_complete_ring_between_valves_5_and_6",
+        "some_cabins_missing_private_stop_valves"
+      ]
+    },
+    "heating": [
+      {
+        "id": "heater_room",
+        "name": "Pump House Heater",
+        "type": "electric_panel_heater",
+        "role": "frost_protection"
+      }
+    ]
+  },
+
+  "electrical_layer": {
+    "distribution_boards": [
+      {
+        "id": "dist_board_garo",
+        "name": "GARO Main Distribution Board",
+        "incoming_voltage": "230V",
+        "main_protection": "32A_main_breaker",
+        "protective_devices": [
+          "rcd_main",
+          "surge_protection_device"
+        ],
+        "circuits": [
+          {
+            "id": "kurs_4",
+            "rating_amps": 10,
+            "name": "Lights/Sockets/Heater/WiFi/Shelly_1",
+            "loads": [
+              "heater_room",
+              "wifi_ruckus_r310",
+              "shelly_1_gen4",
+              "general_lighting",
+              "general_sockets"
+            ]
+          },
+          {
+            "id": "kurs_5",
+            "rating_amps": 16,
+            "name": "Well Pump P1",
+            "downstream_to": "control_cabinet_legacy:p1_section"
+          },
+          {
+            "id": "kurs_6",
+            "rating_amps": 16,
+            "name": "Pressure Pump P2",
+            "downstream_to": "control_cabinet_legacy_and_automation_cabinet:p2_section"
+          }
+        ]
+      }
+    ],
+    "control_cabinets": [
+      {
+        "id": "control_cabinet_legacy",
+        "name": "Legacy Control Cabinet",
+        "role": "motor_control_and_safety",
+        "components": [
+          {
+            "id": "motor_protection_q01",
+            "type": "motor_protection",
+            "protected_load": "pump_p1"
+          },
+          {
+            "id": "contactor_k01",
+            "type": "contactor",
+            "controlled_load": "pump_p1"
+          },
+          {
+            "id": "motor_protection_q02",
+            "type": "motor_protection",
+            "protected_load": "pump_p2"
+          },
+          {
+            "id": "contactor_k02",
+            "type": "contactor",
+            "controlled_load": "automation_cabinet_new:p2_feed"
+          },
+          {
+            "id": "relay_ka1",
+            "type": "auxiliary_relay",
+            "role": "interlock_p2"
+          },
+          {
+            "id": "relay_ka2",
+            "type": "auxiliary_relay",
+            "role": "interlock_p1"
+          },
+          {
+            "id": "transformer_t01",
+            "type": "control_transformer",
+            "role": "provides_control_voltage"
+          }
+        ]
+      },
+      {
+        "id": "automation_cabinet_new",
+        "name": "Automation Cabinet (Shelly / ABB)",
+        "role": "smart_control_for_p2_and_measurement",
+        "components": [
+          {
+            "id": "shelly_pro_em50",
+            "type": "iot_energy_meter_and_switch",
+            "monitors": ["pump_p2"],
+            "controls": ["abb_contactor_p2"]
+          },
+          {
+            "id": "abb_contactor_p2",
+            "type": "contactor",
+            "controlled_load": "pump_p2"
+          },
+          {
+            "id": "auto_manual_switch_p2",
+            "type": "selector_switch",
+            "positions": ["manual_legacy_only", "auto_shelly_and_legacy"]
+          }
+        ]
+      }
+    ]
+  },
+
+  "io_layer": {
+    "sensors": [
+      {
+        "id": "level_sensor_p1",
+        "name": "Water Level Sensor – P1",
+        "type": "level_switch",
+        "location": "well_1_or_suction_area",
+        "role": "dry_run_protection_p1"
+      },
+      {
+        "id": "level_sensor_p2",
+        "name": "Water Level Sensor – P2",
+        "type": "level_switch",
+        "location": "tank_6000l",
+        "role": "low_tank_protection_p2"
+      },
+      {
+        "id": "pulse_hri_1",
+        "name": "Sensus HRI Pulse Adapter",
+        "type": "pulse_output_sensor",
+        "connected_to": "flow_meter_sensus_620"
+      }
+    ],
+    "iot_devices": [
+      {
+        "id": "shelly_1_gen4",
+        "name": "Shelly 1 Gen4 – Water Meter",
+        "type": "iot_pulse_counter",
+        "inputs": ["pulse_hri_1"],
+        "outputs": [
+          "waterflow_lpm",
+          "waterflow_total_liters",
+          "pulse_count"
+        ]
+      },
+      {
+        "id": "shelly_pro_em50",
+        "name": "Shelly Pro EM50",
+        "type": "iot_energy_meter_and_switch",
+        "measures": [
+          "voltage",
+          "current",
+          "active_power",
+          "energy"
+        ],
+        "controls": ["abb_contactor_p2"]
+      }
+    ],
+    "ha_entities": {
+      "flow": [
+        "sensor.waterflow_lpm",
+        "sensor.waterflow_total_liters"
+      ],
+      "pump_power": [
+        "sensor.pressure_pump_voltage",
+        "sensor.pressure_pump_current",
+        "sensor.pressure_pump_active_power",
+        "sensor.pressure_pump_energy"
+      ],
+      "pump_state": [
+        "binary_sensor.pressure_pump_running",
+        "switch.pressure_pump_contactor"
+      ],
+      "virtual": [
+        "sensor.virtual_pressure",
+        "sensor.pump_cycle_liters",
+        "sensor.pump_cycle_runtime_seconds",
+        "sensor.leak_score",
+        "sensor.night_usage_liters"
+      ],
+      "helpers": [
+        "input_number.virtual_pressure_cutin",
+        "input_number.virtual_pressure_cutout",
+        "input_boolean.pump_auto_mode",
+        "input_boolean.force_pump_shutdown"
+      ]
+    }
+  },
+
+  "software_layer": {
+    "home_assistant": {
+      "core_version": "2025.11.3",
+      "os_type": "Home Assistant OS",
+      "roles": [
+        "central_state",
+        "dashboard_visualization",
+        "operator_interface"
+      ],
+      "integrations": [
+        "mqtt",
+        "shelly",
+        "influxdb",
+        "node_red"
+      ]
+    },
+    "node_red": {
+      "version": "4.1.1",
+      "role": "logic_engine_and_automation_brain",
+      "flows": [
+        {
+          "id": "flow_waterflow_ingest",
+          "name": "Waterflow Ingest",
+          "functions": [
+            "mqtt_in_to_waterflow_lpm",
+            "mqtt_in_to_total_liters",
+            "validation",
+            "write_to_influx_raw"
+          ]
+        },
+        {
+          "id": "flow_pump_cycle_detection",
+          "name": "Pump Cycle Detection",
+          "inputs": [
+            "binary_sensor.pressure_pump_running",
+            "sensor.pressure_pump_active_power"
+          ],
+          "outputs": [
+            "cycle_start_event",
+            "cycle_end_event",
+            "cycle_liters",
+            "cycle_runtime"
+          ]
+        },
+        {
+          "id": "flow_virtual_pressure",
+          "name": "Virtual Pressure Model",
+          "inputs": [
+            "cycle_liters",
+            "cycle_runtime",
+            "input_number.virtual_pressure_cutin",
+            "input_number.virtual_pressure_cutout"
+          ],
+          "outputs": [
+            "sensor.virtual_pressure"
+          ]
+        },
+        {
+          "id": "flow_leakage_detection",
+          "name": "Leakage Detection",
+          "inputs": [
+            "night_flow_data",
+            "baseline_usage",
+            "cycle_statistics"
+          ],
+          "outputs": [
+            "sensor.leak_score",
+            "leakage_alarm_events"
+          ]
+        },
+        {
+          "id": "flow_pump_safety_logic",
+          "name": "Pump Safety Logic",
+          "inputs": [
+            "sensor.leak_score",
+            "frost_risk",
+            "input_boolean.force_pump_shutdown"
+          ],
+          "actions": [
+            "turn_off_switch.pressure_pump_contactor",
+            "notify_operator"
+          ]
+        }
+      ]
+    },
+    "influxdb": {
+      "role": "time_series_storage",
+      "buckets": [
+        {
+          "id": "haos-oyna-raw",
+          "description": "Raw MQTT measurements from Shelly devices"
+        },
+        {
+          "id": "haos-oyna-waterflow",
+          "description": "Aggregated flow metrics (minute, hour, day)"
+        },
+        {
+          "id": "haos-oyna-pressure",
+          "description": "Virtual pressure, cycles and runtimes"
+        },
+        {
+          "id": "haos-oyna-leakage",
+          "description": "Leak scores and nightly usage baselines"
+        }
+      ]
+    }
+  },
+
+  "communication_layer": {
+    "network_devices": [
+      {
+        "id": "wifi_ruckus_r310",
+        "name": "Ruckus R310 WiFi AP",
+        "role": "local_wireless_for_shelly_devices"
+      }
+    ],
+    "protocols": ["MQTT", "HTTP", "WebSocket"],
+    "mqtt": {
+      "broker": "mosquitto_ha_addon",
+      "topics": {
+        "flow_meter": [
+          "shelly/1g4/liters_per_minute",
+          "shelly/1g4/total_liters",
+          "shelly/1g4/events"
+        ],
+        "pump_em50": [
+          "shelly/proem50/status/em1:0",
+          "shelly/proem50/status/switch:0",
+          "shelly/proem50/command/switch:0"
+        ]
+      }
+    },
+    "external_access": {
+      "domain": "haos-oyna.duckdns.org",
+      "reverse_proxy": "nginx_proxy_manager"
+    }
+  },
+
+  "operational_modes": [
+    {
+      "id": "mode_legacy_only",
+      "name": "Legacy Only",
+      "description": "Pumps controlled only by legacy cabinet logic and mechanical switches",
+      "requirements": [
+        "auto_manual_switch_p2=manual_legacy_only"
+      ],
+      "dependencies": [],
+      "ai_allowed_to_control_pumps": false
+    },
+    {
+      "id": "mode_smart_auto",
+      "name": "Smart Auto",
+      "description": "Legacy safety + Shelly EM50 + Node-RED + HA for advanced control",
+      "requirements": [
+        "auto_manual_switch_p2=auto_shelly_and_legacy",
+        "mqtt_available",
+        "node_red_running"
+      ],
+      "dependencies": [
+        "communication_layer.mqtt",
+        "software_layer.node_red"
+      ],
+      "ai_allowed_to_control_pumps": true
+    }
+  ],
+
+  "causal_graph": {
+    "nodes": [
+      "water_source",
+      "tank_6000l",
+      "tank_pressure_150l",
+      "distribution_network",
+      "pump_p1",
+      "pump_p2",
+      "flow_meter_sensus_620",
+      "waterflow_lpm",
+      "virtual_pressure",
+      "leak_score",
+      "switch.pressure_pump_contactor"
+    ],
+    "edges": [
+      {
+        "from": "pump_p1",
+        "to": "tank_6000l",
+        "relation": "fills"
+      },
+      {
+        "from": "tank_6000l",
+        "to": "pump_p2",
+        "relation": "feeds"
+      },
+      {
+        "from": "pump_p2",
+        "to": "tank_pressure_150l",
+        "relation": "pressurizes"
+      },
+      {
+        "from": "tank_pressure_150l",
+        "to": "flow_meter_sensus_620",
+        "relation": "feeds"
+      },
+      {
+        "from": "flow_meter_sensus_620",
+        "to": "waterflow_lpm",
+        "relation": "measured_as"
+      },
+      {
+        "from": "waterflow_lpm",
+        "to": "virtual_pressure",
+        "relation": "input_to_model"
+      },
+      {
+        "from": "pump_p2",
+        "to": "virtual_pressure",
+        "relation": "affects"
+      },
+      {
+        "from": "waterflow_lpm",
+        "to": "leak_score",
+        "relation": "contributes_to"
+      },
+      {
+        "from": "leak_score",
+        "to": "switch.pressure_pump_contactor",
+        "relation": "can_force_off_when_high"
+      }
+    ]
+  },
+
+  "safety": {
+    "mechanical_failsafes": [
+      "level_sensor_p1_dry_run_protection",
+      "level_sensor_p2_low_tank_protection",
+      "motor_protection_q01_overcurrent_p1",
+      "motor_protection_q02_overcurrent_p2",
+      "mechanical_pressure_switch_p2"
+    ],
+    "digital_failsafes": [
+      "node_red_leakage_shutdown",
+      "node_red_frost_shutdown",
+      "manual_force_pump_shutdown_via_ha"
+    ],
+    "fallback_rules": [
+      "if_mqtt_unavailable_then_use_mode_legacy_only",
+      "if_node_red_down_then_block_ai_control"
+    ]
+  }
+}
