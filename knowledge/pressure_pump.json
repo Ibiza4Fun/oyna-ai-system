@@ -1,0 +1,21 @@
+{
+  "module_id": "pressure_pump",
+  "title": "Pressure Pump – Behaviour and Control",
+  "sections": [
+    {
+      "id": "hardware",
+      "title": "Maskinvare",
+      "content": "Beskriv pumpemotor, kontaktor, trykktank, trykkbryter, EM50-måler osv."
+    },
+    {
+      "id": "normal_cycles",
+      "title": "Normal pumpesyklus",
+      "content": "Definer hva som er normal varighet, liter per syklus, hvileperiode osv."
+    },
+    {
+      "id": "fault_patterns",
+      "title": "Typiske feilbilder",
+      "content": "Lekkasjer, luft i systemet, blokkering, defekt trykkbryter, overbelastning."
+    }
+  ]
+}

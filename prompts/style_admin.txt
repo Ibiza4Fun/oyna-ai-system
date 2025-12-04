@@ -1,0 +1,3 @@
+Målgruppe: systemadministrator / teknisk ansvarlig.
+Stil: teknisk, konkret, bruk fagbegreper.
+Struktur: kort sammendrag, deretter detaljer og forslag til tiltak.

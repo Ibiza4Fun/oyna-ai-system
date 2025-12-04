@@ -1,0 +1,21 @@
+{
+  "module_id": "waterflow",
+  "title": "Waterflow and Consumption Patterns",
+  "sections": [
+    {
+      "id": "sensors",
+      "title": "Flow-sensorer",
+      "content": "Forklar sensor.waterflow_lpm og sensor.waterflow_total_liters og hvordan de brukes."
+    },
+    {
+      "id": "usage_patterns",
+      "title": "Tappingsmønstre",
+      "content": "Beskriv typiske forbruksmønstre for hytter, helger, ferieperioder osv."
+    },
+    {
+      "id": "leak_signatures",
+      "title": "Lekkasjemønstre",
+      "content": "Hva skiller lekkasje fra normal smådrypp, spesielt om natten."
+    }
+  ]
+}

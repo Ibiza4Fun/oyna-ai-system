@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Øyna Digital Twin Schema",
+  "type": "object",
+  "required": ["version", "description"],
+  "properties": {
+    "version": { "type": "string" },
+    "description": { "type": "string" },
+    "last_updated": { "type": "string" },
+
+    "locations": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "physical_system": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "electrical_system": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "sensors_and_devices": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "network_and_communication": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "software_stack": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "safety_and_failover": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

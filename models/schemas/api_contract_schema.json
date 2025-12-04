@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Øyna AI API Contract Schema",
+  "type": "object",
+  "required": ["api_contract_version", "description", "endpoints"],
+  "properties": {
+    "api_contract_version": { "type": "string" },
+    "description": { "type": "string" },
+
+    "endpoints": {
+      "type": "object",
+      "description": "Grouped endpoints (system, history, graph, control, events, mode, meta, knowledge, etc.)",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

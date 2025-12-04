@@ -1,0 +1,10 @@
+{
+  "name": "ha_get_state",
+  "description": "Hent tilstand for en eller flere Home Assistant-entiteter via Node-RED.",
+  "input": {
+    "entities": "string | array<string>"
+  },
+  "output": {
+    "states": "object  // { \"entity_id\": { \"state\": \"...\", \"attributes\": {...} } }"
+  }
+}

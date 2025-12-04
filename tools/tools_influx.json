@@ -1,0 +1,11 @@
+{
+  "name": "influx_query",
+  "description": "Kjør en predefinert eller fri InfluxDB-spørring via Node-RED.",
+  "input": {
+    "query": "string",
+    "bucket": "string"
+  },
+  "output": {
+    "result": "array<object>"
+  }
+}

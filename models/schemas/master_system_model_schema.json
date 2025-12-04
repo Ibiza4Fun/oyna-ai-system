@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Øyna Master System Model Schema",
+  "type": "object",
+  "required": ["model_version", "description"],
+  "properties": {
+    "model_version": { "type": "string" },
+    "description": { "type": "string" },
+
+    "source_documents": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "meta": {
+      "type": "object",
+      "properties": {
+        "site_name": { "type": "string" },
+        "system_type": { "type": "string" },
+        "locations": { "type": "object" },
+        "stakeholders": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "physical_layer": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "electrical_layer": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "io_layer": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "software_layer": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "communication_layer": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "operational_modes": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+
+    "causal_graph": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "edges": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "safety": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

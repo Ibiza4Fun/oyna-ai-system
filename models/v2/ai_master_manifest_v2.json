@@ -1,0 +1,181 @@
+{
+  "version": "2.0",
+  "generated_at": "AUTO",
+  "system": {
+    "name": "Øyna Waterworks AI System",
+    "description": "Unified model integrating the API contract, digital twin, system topology, knowledge graph, and operational logic for the Øyna Waterworks AI Agent."
+  },
+
+  "models": {
+    "api_contract": {
+      "id": "oyna_api_contract_v1",
+      "source": "models/v1/oyna_ai_api_contract_v1.json"
+    },
+    "digital_twin": {
+      "id": "oyna_digital_twin_v1",
+      "source": "models/v1/oyna_digital_twin_v1.json"
+    },
+    "master_system_model": {
+      "id": "oyna_master_system_model_v1",
+      "source": "models/v1/oyna_master_system_model_v1.json"
+    },
+    "knowledge_graph": {
+      "id": "oyna_knowledge_graph_v1",
+      "source": "models/v1/oyna_knowledge_graph_v1.json"
+    },
+    "manifest_index": {
+      "id": "manifest_v1",
+      "source": "manifest.json"
+    }
+  },
+
+  "integration": {
+    "home_assistant": {
+      "api": {
+        "base_url": "http://haos.local:8123",
+        "endpoints": "from_api_contract",
+        "authentication": "bearer_token"
+      },
+      "entities": "defined_in_matcher:model=master_system_model"
+    },
+    "node_red": {
+      "flows": "inferred_from_knowledge_graph",
+      "tooling": {
+        "query": "supports ha service calls, mqtt, and http"
+      }
+    },
+    "influxdb": {
+      "buckets": "from master_system_model",
+      "usage": "historical metrics, pump cycles, flow data"
+    }
+  },
+
+  "semantic_layers": {
+    "operational_layer": {
+      "source": "master_system_model",
+      "provides": [
+        "Pump cycles",
+        "Flow dynamics",
+        "Pressure model",
+        "Leak detection",
+        "Anomaly detection",
+        "System-mode transitions"
+      ]
+    },
+    "structural_layer": {
+      "source": "digital_twin",
+      "provides": [
+        "Pipes",
+        "Valves",
+        "Pump relations",
+        "Sensor placement",
+        "Data provenance"
+      ]
+    },
+    "knowledge_layer": {
+      "source": "knowledge_graph",
+      "provides": [
+        "Entity linking",
+        "Semantic categories",
+        "Cross-model relationships",
+        "Query mapping"
+      ]
+    },
+    "api_layer": {
+      "source": "api_contract",
+      "provides": [
+        "Tool interface for AI agent",
+        "External access schema",
+        "Introspectable operations"
+      ]
+    }
+  },
+
+  "agent_runtime": {
+    "tools": {
+      "home_assistant": {
+        "actions": [
+          "get_entity_state",
+          "call_service",
+          "list_entities"
+        ]
+      },
+      "node_red": {
+        "actions": [
+          "invoke_flow",
+          "inject_data",
+          "subscribe"
+        ]
+      },
+      "influxdb": {
+        "actions": [
+          "query_latest",
+          "query_range",
+          "write_point"
+        ]
+      }
+    },
+    "reasoning": {
+      "supports": [
+        "goal decomposition",
+        "temporal reasoning",
+        "physical system modeling",
+        "safety constraints",
+        "uncertainty handling"
+      ],
+      "constraints": [
+        "preserve system integrity",
+        "never override safety limits",
+        "all pump control routed through HA"
+      ]
+    }
+  },
+
+  "relationships": {
+    "pump_control": {
+      "depends_on": [
+        "api_contract",
+        "master_system_model",
+        "digital_twin"
+      ],
+      "uses_entities": [
+        "switch.pressure_pump_contactor",
+        "binary_sensor.pressure_pump_running",
+        "sensor.waterflow_total_liters"
+      ]
+    },
+    "leak_detection": {
+      "depends_on": [
+        "master_system_model",
+        "knowledge_graph",
+        "influxdb"
+      ],
+      "uses_influx": [
+        "bucket:haos-oyna-waterflow"
+      ]
+    },
+    "pressure_estimation": {
+      "depends_on": [
+        "digital_twin",
+        "flow dynamics",
+        "structured model relationships"
+      ]
+    }
+  },
+
+  "ai_agent_entrypoint": {
+    "main_manifest": "ai_master_manifest_v2",
+    "load_order": [
+      "manifest_index",
+      "api_contract",
+      "digital_twin",
+      "master_system_model",
+      "knowledge_graph"
+    ],
+    "guarantees": [
+      "all models validated before load",
+      "all schemas satisfied",
+      "relationships compiled"
+    ]
+  }
+}

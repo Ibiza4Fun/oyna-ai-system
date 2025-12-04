@@ -1,0 +1,12 @@
+{
+  "name": "node_red_action",
+  "description": "Trigge en Node-RED flow eller webhook for å utføre en operasjon (f.eks. stopp pumpe).",
+  "input": {
+    "flow": "string",
+    "payload": "object"
+  },
+  "output": {
+    "status": "ok | fail",
+    "info": "string"
+  }
+}

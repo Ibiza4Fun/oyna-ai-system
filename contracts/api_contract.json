@@ -1,0 +1,35 @@
+{
+  "request": {
+    "required_fields": ["intent", "context_modules"],
+    "optional_fields": ["user_query", "dynamic_data", "allowed_tools", "settings"],
+    "schema": {
+      "intent": "string  // f.eks. analyze_pump_cycle, leak_detection",
+      "user_query": "string | null",
+      "context_modules": "array<string>  // f.eks. [\"system_core\",\"waterflow\"]",
+      "dynamic_data": "object  // live sensordata, siste sykluser, etc.",
+      "allowed_tools": "array<string>  // f.eks. [\"ha_get_state\",\"influx_query\"]",
+      "settings": {
+        "language": "nb-NO | en-GB",
+        "detail_level": "short | normal | high",
+        "audience": "admin | cabin_owner"
+      }
+    }
+  },
+
+  "response": {
+    "required_fields": ["status", "summary"],
+    "optional_fields": ["insights", "recommendations", "actions", "confidence"],
+    "schema": {
+      "status": "ok | warning | error",
+      "summary": "string",
+      "insights": "string",
+      "recommendations": "string",
+      "actions": {
+        "should_execute": "boolean",
+        "type": "none | ha_service | node_red_flow",
+        "payload": "object | null"
+      },
+      "confidence": "number  // 0.0–1.0"
+    }
+  }
+}
