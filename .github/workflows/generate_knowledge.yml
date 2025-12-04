@@ -27,7 +27,8 @@ jobs:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: python tools/generate_knowledge.py
 
-    - name: Commit generated knowledge
+    - name: Commit generated knowledge & moved files
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
-        commit_message: "Auto-generate knowledge modules from raw input"
+        commit_message: "Batch generate knowledge modules"
+        push_options: '--force'
