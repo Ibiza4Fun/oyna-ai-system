@@ -1,0 +1,94 @@
+{
+  "manifest_version": "1.0",
+  "system_name": "Øyna Vassverk",
+  "description": "Top-level manifest that binds together all core system models for the Øyna AI Agent.",
+
+  "models": {
+    "knowledge_graph": {
+      "id": "oyna_knowledge_graph_v1",
+      "path": "AI Knowledge Graph v1/oyna_knowledge_graph_v1.json",
+      "description": "Semantic graph of all components, entities, flows, devices and causal relations"
+    },
+    "api_contract": {
+      "id": "oyna_ai_api_contract_v1",
+      "path": "API Contract v1/oyna_ai_api_contract_v1.json",
+      "description": "Public API structure for AI-to-system communication"
+    },
+    "digital_twin": {
+      "id": "oyna_digital_twin_v1",
+      "path": "Digital tvilling v1/oyna_digital_twin_v1.json",
+      "description": "Full virtual representation of physical, electrical, hydraulic and software layers"
+    },
+    "master_system_model": {
+      "id": "oyna_master_system_model_v1",
+      "path": "Master System Model v1/oyna_master_system_model_v1.json",
+      "description": "Unified canonical model combining physical, electrical, I/O, software, safety and causal structure"
+    }
+  },
+
+  "relationships": {
+    "knowledge_graph_based_on": "master_system_model",
+    "digital_twin_derives_from": [
+      "master_system_model.physical_layer",
+      "master_system_model.electrical_layer",
+      "master_system_model.io_layer",
+      "master_system_model.software_layer"
+    ],
+    "api_contract_exposes": [
+      "digital_twin",
+      "master_system_model",
+      "knowledge_graph"
+    ],
+    "ai_runtime_requires": [
+      "api_contract",
+      "digital_twin",
+      "knowledge_graph"
+    ]
+  },
+
+  "ai_runtime": {
+    "embedding_strategy": {
+      "chunk_size_chars": 1800,
+      "overlap_chars": 200,
+      "index_priority": [
+        "master_system_model",
+        "knowledge_graph",
+        "digital_twin",
+        "api_contract"
+      ],
+      "metadata_fields": [
+        "model_id",
+        "node_id",
+        "entity_type",
+        "layer",
+        "component_role"
+      ]
+    },
+    "prompt_router": {
+      "routes": {
+        "status": "api_contract.system.get_status",
+        "history": "api_contract.history.get_history",
+        "topology": "master_system_model",
+        "device_relations": "knowledge_graph",
+        "digital_twin_simulation": "digital_twin",
+        "control": "api_contract.control"
+      }
+    }
+  },
+
+  "integrity": {
+    "consistency_checks": {
+      "cross_reference": [
+        "all ha_entities must appear in knowledge_graph",
+        "all pumps/tanks/sensors must align in digital_twin and master_system_model",
+        "all API-returned entities must exist in master_system_model.io_layer"
+      ]
+    }
+  },
+
+  "metadata": {
+    "generated_at": "2025-12-03T00:00:00+01:00",
+    "author": "Øyna Vassverk – AI System Builder",
+    "schema_version": "1.0"
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "api_contract_version": "1.0",
+  "description": "API contract for Øyna Vassverk AI Agent – system status, history, topology, control and knowledge access endpoints.",
+  "endpoints": {
+    "system": {
+      "get_status": {
+        "method": "GET",
+        "path": "/ai/system_status",
+        "returns": {
+          "timestamp": "string",
+          "mode": "string",
+          "pump_state": {
+            "running": "boolean",
+            "contactor_state": "string",
+            "virtual_pressure_bar": "number",
+            "cut_in": "number",
+            "cut_out": "number"
+          },
+          "flow": {
+            "lpm": "number",
+            "total_liters": "number"
+          },
+          "cycle": {
+            "last_cycle_liters": "number",
+            "last_cycle_runtime_s": "number",
+            "cycle_count_today": "number"
+          },
+          "leakage": {
+            "leak_score": "number",
+            "night_usage_liters": "number",
+            "baseline": "number"
+          },
+          "power_p2": {
+            "voltage": "number",
+            "current": "number",
+            "active_power": "number"
+          },
+          "alerts": "array"
+        }
+      }
+    },
+    "history": {
+      "get_history": {
+        "method": "GET",
+        "path": "/ai/data/history",
+        "query_parameters": {
+          "metric": ["pressure", "flow", "leakage", "power", "cycles"],
+          "range": ["1h", "24h", "7d", "30d"],
+          "resolution": ["1m", "5m", "1h"]
+        },
+        "returns": {
+          "metric": "string",
+          "range": "string",
+          "resolution": "string",
+          "series": "array_of_[timestamp,value]"
+        }
+      }
+    },
+    "graph": {
+      "get_node": {
+        "method": "GET",
+        "path": "/ai/graph/node/{id}",
+        "returns": {
+          "id": "string",
+          "type": "string",
+          "label": "string",
+          "incoming": "array_of_objects",
+          "outgoing": "array_of_objects",
+          "controlled_by": "array",
+          "depends_on": "array"
+        }
+      },
+      "get_dependencies": {
+        "method": "GET",
+        "path": "/ai/graph/dependencies/{entity}",
+        "returns": {
+          "entity": "string",
+          "derived_from": "array",
+          "computed_by": "array"
+        }
+      }
+    },
+    "control": {
+      "pump_on": {
+        "method": "POST",
+        "path": "/ai/control/pump/on",
+        "body": {
+          "command": "pump_on",
+          "reason": "string"
+        }
+      },
+      "pump_off": {
+        "method": "POST",
+        "path": "/ai/control/pump/off",
+        "body": {
+          "command": "pump_off",
+          "reason": "string"
+        }
+      },
+      "set_pressure_targets": {
+        "method": "POST",
+        "path": "/ai/control/set_pressure_targets",
+        "body": {
+          "cut_in": "number",
+          "cut_out": "number"
+        }
+      }
+    },
+    "events": {
+      "get_alerts": {
+        "method": "GET",
+        "path": "/ai/events/alerts",
+        "returns": {
+          "active_alerts": "array"
+        }
+      },
+      "get_system_health": {
+        "method": "GET",
+        "path": "/ai/events/system_health",
+        "returns": {
+          "node_red_alive": "boolean",
+          "mqtt_connected": "boolean",
+          "influxdb_connected": "boolean",
+          "last_cycle_detection_ts": "string"
+        }
+      }
+    },
+    "mode": {
+      "get_mode": {
+        "method": "GET",
+        "path": "/ai/mode",
+        "returns": {
+          "mode": "string",
+          "ai_allowed_to_control": "boolean"
+        }
+      },
+      "override_mode": {
+        "method": "POST",
+        "path": "/ai/mode/override",
+        "body": {
+          "mode": "string",
+          "reason": "string"
+        }
+      }
+    },
+    "meta": {
+      "get_capabilities": {
+        "method": "GET",
+        "path": "/ai/meta/capabilities",
+        "returns": {
+          "ai_control_allowed": "boolean",
+          "can_control_pump": "boolean",
+          "can_adjust_pressure": "boolean",
+          "can_read_history": "boolean",
+          "can_read_topology": "boolean",
+          "safety_layers": "array"
+        }
+      }
+    },
+    "knowledge": {
+      "get_msm": {
+        "method": "GET",
+        "path": "/ai/knowledge/msm",
+        "returns": "full_master_system_model_json"
+      },
+      "get_knowledge_graph": {
+        "method": "GET",
+        "path": "/ai/knowledge/graph",
+        "returns": "full_knowledge_graph_json"
+      }
+    }
+  }
+}
