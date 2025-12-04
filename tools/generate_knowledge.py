@@ -93,11 +93,13 @@ def ai_convert_to_knowledge(content: str, filename: str) -> str:
     if is_image:
         user_content = [
             {
-                "type": "input_image",
-                "image_url": content,
+                "type": "image_url",
+                "image_url": {
+                    "url": content
+                },
             },
             {
-                "type": "input_text",
+                "type": "text",
                 "text": f"""
 You are ØynaWaterworksDocAI.
 
@@ -120,7 +122,7 @@ Filename: {filename}
     else:
         user_content = [
             {
-                "type": "input_text",
+                "type": "text",
                 "text": f"""
 You are ØynaWaterworksDocAI.
 
@@ -145,7 +147,10 @@ Document content:
         messages=[
             {
                 "role": "system",
-                "content": "You convert Øyna waterworks engineering documents and diagrams into structured JSON knowledge modules compatible with downstream AI agents.",
+                "content": (
+                    "You convert Øyna waterworks engineering documents and diagrams into "
+                    "structured JSON knowledge modules compatible with downstream AI agents."
+                ),
             },
             {
                 "role": "user",
@@ -159,7 +164,6 @@ Document content:
     # Try to normalize to valid JSON
     try:
         parsed = json.loads(raw_content)
-        # re-dump with nice formatting, UTF-8 safe
         return json.dumps(parsed, ensure_ascii=False, indent=2)
     except Exception:
         # If the model ever returns non-JSON, wrap it in a simple structure
