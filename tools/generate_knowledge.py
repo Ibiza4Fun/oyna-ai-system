@@ -67,12 +67,19 @@ Document content:
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "You convert engineering documents into structured JSON knowledge modules."},
-            {"role": "user", "content": prompt}
+            {
+                "role": "system",
+                "content": "You convert engineering documents into structured JSON knowledge modules."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
         ]
     )
 
-    return response.choices[0].message["content"]
+    # FIXED: Use .content instead of ["content"]
+    return response.choices[0].message.content
 
 # --------------------------
 # MAIN
