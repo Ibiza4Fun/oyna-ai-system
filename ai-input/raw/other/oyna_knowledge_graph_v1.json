@@ -1,0 +1,185 @@
+{
+  "graph_version": "oyna_knowledge_graph_v1",
+  "based_on_model": "oyna_master_system_model_v1",
+  "description": "Knowledge graph for Øyna Vassverk – nodes and relations for AI reasoning",
+
+  "node_types": [
+    "physical_component",
+    "electrical_component",
+    "iot_device",
+    "sensor",
+    "ha_entity",
+    "software_flow",
+    "data_bucket",
+    "network_element",
+    "operational_mode",
+    "safety_function",
+    "process"
+  ],
+
+  "nodes": [
+    { "id": "well_1", "type": "physical_component", "label": "Groundwater well" },
+    { "id": "pump_p1", "type": "physical_component", "label": "Well Pump P1" },
+    { "id": "tank_6000l", "type": "physical_component", "label": "6000L Main Storage Tank" },
+    { "id": "pump_p2", "type": "physical_component", "label": "Pressure Pump P2" },
+    { "id": "tank_pressure_150l", "type": "physical_component", "label": "150L Pressure Tank" },
+    { "id": "flow_meter_sensus_620", "type": "physical_component", "label": "Sensus 620 Water Meter" },
+    { "id": "distribution_network", "type": "physical_component", "label": "Pipe Network to Cabins" },
+
+    { "id": "dist_board_garo", "type": "electrical_component", "label": "GARO Main Distribution Board" },
+    { "id": "motor_protection_q01", "type": "electrical_component", "label": "Motor Protection P1" },
+    { "id": "contactor_k01", "type": "electrical_component", "label": "Contactor P1" },
+    { "id": "motor_protection_q02", "type": "electrical_component", "label": "Motor Protection P2" },
+    { "id": "contactor_k02", "type": "electrical_component", "label": "Contactor P2" },
+    { "id": "relay_ka1", "type": "electrical_component", "label": "Relay KA1 (P2 interlock)" },
+    { "id": "relay_ka2", "type": "electrical_component", "label": "Relay KA2 (P1 interlock)" },
+    { "id": "automation_cabinet_new", "type": "electrical_component", "label": "Automation Cabinet (Shelly/ABB)" },
+    { "id": "abb_contactor_p2", "type": "electrical_component", "label": "ABB Contactor P2" },
+    { "id": "auto_manual_switch_p2", "type": "electrical_component", "label": "Auto/Manual Switch P2" },
+
+    { "id": "shelly_1_gen4", "type": "iot_device", "label": "Shelly 1 Gen4 – Pulse Counter" },
+    { "id": "shelly_pro_em50", "type": "iot_device", "label": "Shelly Pro EM50 – Energy Meter & Switch" },
+    { "id": "wifi_ruckus_r310", "type": "network_element", "label": "Ruckus R310 WiFi AP" },
+    { "id": "mqtt_broker_mosquitto", "type": "network_element", "label": "Mosquitto Broker (HA addon)" },
+
+    { "id": "sensor.waterflow_lpm", "type": "ha_entity", "label": "Waterflow L/min" },
+    { "id": "sensor.waterflow_total_liters", "type": "ha_entity", "label": "Waterflow Total Liters" },
+    { "id": "sensor.pressure_pump_voltage", "type": "ha_entity", "label": "Pressure Pump Voltage" },
+    { "id": "sensor.pressure_pump_current", "type": "ha_entity", "label": "Pressure Pump Current" },
+    { "id": "sensor.pressure_pump_active_power", "type": "ha_entity", "label": "Pressure Pump Active Power" },
+    { "id": "binary_sensor.pressure_pump_running", "type": "ha_entity", "label": "Pressure Pump Running" },
+    { "id": "switch.pressure_pump_contactor", "type": "ha_entity", "label": "Pressure Pump Contactor Switch" },
+
+    { "id": "sensor.virtual_pressure", "type": "ha_entity", "label": "Virtual Pressure" },
+    { "id": "sensor.pump_cycle_liters", "type": "ha_entity", "label": "Pump Cycle Liters" },
+    { "id": "sensor.pump_cycle_runtime_seconds", "type": "ha_entity", "label": "Pump Cycle Runtime Seconds" },
+    { "id": "sensor.leak_score", "type": "ha_entity", "label": "Leak Score" },
+    { "id": "sensor.night_usage_liters", "type": "ha_entity", "label": "Night Usage Liters" },
+
+    { "id": "input_number.virtual_pressure_cutin", "type": "ha_entity", "label": "Virtual Pressure Cut-In" },
+    { "id": "input_number.virtual_pressure_cutout", "type": "ha_entity", "label": "Virtual Pressure Cut-Out" },
+    { "id": "input_boolean.pump_auto_mode", "type": "ha_entity", "label": "Pump Auto Mode" },
+    { "id": "input_boolean.force_pump_shutdown", "type": "ha_entity", "label": "Force Pump Shutdown" },
+
+    { "id": "flow_waterflow_ingest", "type": "software_flow", "label": "NR Flow – Waterflow Ingest" },
+    { "id": "flow_pump_cycle_detection", "type": "software_flow", "label": "NR Flow – Pump Cycle Detection" },
+    { "id": "flow_virtual_pressure", "type": "software_flow", "label": "NR Flow – Virtual Pressure Model" },
+    { "id": "flow_leakage_detection", "type": "software_flow", "label": "NR Flow – Leakage Detection" },
+    { "id": "flow_pump_safety_logic", "type": "software_flow", "label": "NR Flow – Pump Safety Logic" },
+
+    { "id": "bucket_haos_oyna_raw", "type": "data_bucket", "label": "Influx – RAW" },
+    { "id": "bucket_haos_oyna_waterflow", "type": "data_bucket", "label": "Influx – Waterflow" },
+    { "id": "bucket_haos_oyna_pressure", "type": "data_bucket", "label": "Influx – Pressure" },
+    { "id": "bucket_haos_oyna_leakage", "type": "data_bucket", "label": "Influx – Leakage" },
+
+    { "id": "mode_legacy_only", "type": "operational_mode", "label": "Mode – Legacy Only" },
+    { "id": "mode_smart_auto", "type": "operational_mode", "label": "Mode – Smart Auto" },
+
+    { "id": "safety_mech_low_level_p2", "type": "safety_function", "label": "Mechanical Low Tank Protection P2" },
+    { "id": "safety_mech_pressure_switch", "type": "safety_function", "label": "Mechanical Pressure Switch P2" },
+    { "id": "safety_digital_leak_shutdown", "type": "safety_function", "label": "Digital Leak-Based Shutdown" },
+    { "id": "safety_digital_frost_shutdown", "type": "safety_function", "label": "Digital Frost Shutdown" },
+
+    { "id": "process_water_production", "type": "process", "label": "Water Production P1" },
+    { "id": "process_pressure_control", "type": "process", "label": "Pressure Control P2" },
+    { "id": "process_leakage_monitoring", "type": "process", "label": "Leakage Monitoring" },
+    { "id": "process_frost_protection", "type": "process", "label": "Frost Protection" }
+  ],
+
+  "edge_types": [
+    "feeds",
+    "fills",
+    "pressurizes",
+    "supplies_power_to",
+    "controls",
+    "measures",
+    "publishes_to_mqtt",
+    "stored_in",
+    "computed_by",
+    "derived_from",
+    "depends_on",
+    "enabled_by_mode",
+    "can_trigger",
+    "can_shutdown",
+    "protected_by",
+    "fallback_to"
+  ],
+
+  "edges": [
+    { "from": "well_1", "to": "pump_p1", "type": "feeds" },
+    { "from": "pump_p1", "to": "tank_6000l", "type": "fills" },
+    { "from": "tank_6000l", "to": "pump_p2", "type": "feeds" },
+    { "from": "pump_p2", "to": "tank_pressure_150l", "type": "pressurizes" },
+    { "from": "tank_pressure_150l", "to": "flow_meter_sensus_620", "type": "feeds" },
+    { "from": "flow_meter_sensus_620", "to": "distribution_network", "type": "feeds" },
+
+    { "from": "dist_board_garo", "to": "pump_p1", "type": "supplies_power_to" },
+    { "from": "dist_board_garo", "to": "pump_p2", "type": "supplies_power_to" },
+    { "from": "dist_board_garo", "to": "shelly_1_gen4", "type": "supplies_power_to" },
+    { "from": "dist_board_garo", "to": "wifi_ruckus_r310", "type": "supplies_power_to" },
+
+    { "from": "motor_protection_q01", "to": "pump_p1", "type": "protected_by" },
+    { "from": "motor_protection_q02", "to": "pump_p2", "type": "protected_by" },
+    { "from": "relay_ka2", "to": "pump_p1", "type": "controls" },
+    { "from": "relay_ka1", "to": "pump_p2", "type": "controls" },
+    { "from": "abb_contactor_p2", "to": "pump_p2", "type": "controls" },
+    { "from": "auto_manual_switch_p2", "to": "pump_p2", "type": "controls" },
+
+    { "from": "shelly_1_gen4", "to": "sensor.waterflow_lpm", "type": "measures" },
+    { "from": "shelly_1_gen4", "to": "sensor.waterflow_total_liters", "type": "measures" },
+
+    { "from": "shelly_pro_em50", "to": "sensor.pressure_pump_voltage", "type": "measures" },
+    { "from": "shelly_pro_em50", "to": "sensor.pressure_pump_current", "type": "measures" },
+    { "from": "shelly_pro_em50", "to": "sensor.pressure_pump_active_power", "type": "measures" },
+    { "from": "shelly_pro_em50", "to": "binary_sensor.pressure_pump_running", "type": "measures" },
+    { "from": "shelly_pro_em50", "to": "switch.pressure_pump_contactor", "type": "controls" },
+
+    { "from": "wifi_ruckus_r310", "to": "mqtt_broker_mosquitto", "type": "feeds" },
+    { "from": "shelly_1_gen4", "to": "mqtt_broker_mosquitto", "type": "publishes_to_mqtt" },
+    { "from": "shelly_pro_em50", "to": "mqtt_broker_mosquitto", "type": "publishes_to_mqtt" },
+
+    { "from": "mqtt_broker_mosquitto", "to": "flow_waterflow_ingest", "type": "feeds" },
+    { "from": "mqtt_broker_mosquitto", "to": "flow_pump_cycle_detection", "type": "feeds" },
+
+    { "from": "flow_waterflow_ingest", "to": "bucket_haos_oyna_raw", "type": "stored_in" },
+    { "from": "flow_pump_cycle_detection", "to": "bucket_haos_oyna_pressure", "type": "stored_in" },
+    { "from": "flow_leakage_detection", "to": "bucket_haos_oyna_leakage", "type": "stored_in" },
+
+    { "from": "sensor.waterflow_lpm", "to": "flow_virtual_pressure", "type": "depends_on" },
+    { "from": "sensor.waterflow_total_liters", "to": "flow_pump_cycle_detection", "type": "depends_on" },
+    { "from": "sensor.pressure_pump_active_power", "to": "flow_pump_cycle_detection", "type": "depends_on" },
+
+    { "from": "flow_pump_cycle_detection", "to": "sensor.pump_cycle_liters", "type": "computed_by" },
+    { "from": "flow_pump_cycle_detection", "to": "sensor.pump_cycle_runtime_seconds", "type": "computed_by" },
+    { "from": "flow_virtual_pressure", "to": "sensor.virtual_pressure", "type": "computed_by" },
+    { "from": "flow_leakage_detection", "to": "sensor.leak_score", "type": "computed_by" },
+    { "from": "flow_leakage_detection", "to": "sensor.night_usage_liters", "type": "computed_by" },
+
+    { "from": "sensor.pump_cycle_liters", "to": "sensor.virtual_pressure", "type": "derived_from" },
+    { "from": "sensor.pump_cycle_runtime_seconds", "to": "sensor.virtual_pressure", "type": "derived_from" },
+    { "from": "sensor.waterflow_lpm", "to": "sensor.leak_score", "type": "derived_from" },
+    { "from": "sensor.night_usage_liters", "to": "sensor.leak_score", "type": "derived_from" },
+
+    { "from": "sensor.leak_score", "to": "flow_pump_safety_logic", "type": "depends_on" },
+    { "from": "input_boolean.force_pump_shutdown", "to": "flow_pump_safety_logic", "type": "depends_on" },
+
+    { "from": "flow_pump_safety_logic", "to": "switch.pressure_pump_contactor", "type": "controls" },
+    { "from": "flow_pump_safety_logic", "to": "safety_digital_leak_shutdown", "type": "can_trigger" },
+
+    { "from": "mode_smart_auto", "to": "shelly_pro_em50", "type": "enabled_by_mode" },
+    { "from": "mode_smart_auto", "to": "flow_pump_safety_logic", "type": "enabled_by_mode" },
+    { "from": "mode_legacy_only", "to": "pump_p2", "type": "controls" },
+
+    { "from": "safety_mech_low_level_p2", "to": "pump_p2", "type": "can_shutdown" },
+    { "from": "safety_mech_pressure_switch", "to": "pump_p2", "type": "can_shutdown" },
+    { "from": "safety_digital_leak_shutdown", "to": "switch.pressure_pump_contactor", "type": "can_shutdown" },
+    { "from": "safety_digital_frost_shutdown", "to": "switch.pressure_pump_contactor", "type": "can_shutdown" },
+
+    { "from": "process_water_production", "to": "pump_p1", "type": "depends_on" },
+    { "from": "process_pressure_control", "to": "pump_p2", "type": "depends_on" },
+    { "from": "process_leakage_monitoring", "to": "flow_leakage_detection", "type": "depends_on" },
+    { "from": "process_frost_protection", "to": "safety_digital_frost_shutdown", "type": "depends_on" },
+
+    { "from": "mode_smart_auto", "to": "mode_legacy_only", "type": "fallback_to" }
+  ]
+}
