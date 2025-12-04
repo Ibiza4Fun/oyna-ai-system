@@ -6,17 +6,12 @@ from pypdf import PdfReader
 import docx
 from openai import OpenAI
 
-# OpenAI client – API key from environment (OPENAI_API_KEY)
+# OpenAI client – API key provided via environment (OPENAI_API_KEY)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# Directories
 RAW_DIR = Path("ai-input/raw")
 OUT_DIR = Path("knowledge")
-PROCESSED_DIR = Path("ai-input/processed")
-
 OUT_DIR.mkdir(exist_ok=True)
-PROCESSED_DIR.mkdir(exist_ok=True)
-
 
 # --------------------------
 # Extract TEXT from documents
@@ -45,6 +40,10 @@ def extract_text_generic(path: Path) -> str:
 
 
 def extract_image_base64(path: Path) -> str:
+    """
+    Returns a data: URL with base64-encoded image content.
+    This can be passed directly to OpenAI Vision.
+    """
     with path.open("rb") as imgf:
         encoded = base64.b64encode(imgf.read()).decode("utf-8")
 
@@ -58,6 +57,9 @@ def extract_image_base64(path: Path) -> str:
 
 
 def extract_content(path: Path) -> str:
+    """
+    Returns either plain text (for docs) or a data:image/... base64 string for images.
+    """
     ext = path.suffix.lower()
 
     if ext == ".pdf":
@@ -72,6 +74,7 @@ def extract_content(path: Path) -> str:
     if ext in [".png", ".jpg", ".jpeg", ".webp"]:
         return extract_image_base64(path)
 
+    # Fallback: mark as unsupported
     return f"[UNSUPPORTED FILE TYPE: {path.name}]"
 
 
@@ -80,6 +83,11 @@ def extract_content(path: Path) -> str:
 # --------------------------
 
 def ai_convert_to_knowledge(content: str, filename: str) -> str:
+    """
+    Sends either text or image+text to OpenAI and expects STRICT JSON in response.
+    Returns the JSON string (optionally normalized).
+    """
+
     is_image = content.startswith("data:image")
 
     if is_image:
@@ -88,28 +96,28 @@ def ai_convert_to_knowledge(content: str, filename: str) -> str:
                 "type": "image_url",
                 "image_url": {
                     "url": content
-                }
+                },
             },
             {
                 "type": "text",
                 "text": f"""
 You are ØynaWaterworksDocAI.
 
-The user has provided an ENGINEERING DIAGRAM / PHOTO.
+The user has provided an ENGINEERING DIAGRAM / PHOTO as an image.
 
 Task:
 - Inspect the image carefully.
-- Identify components, connections, flows, and technical details.
-- Convert the diagram into a structured Øyna AI knowledge module.
+- Identify components, connections, flows, and relevant technical context.
+- Convert this into a structured Øyna AI knowledge module.
 
-Rules:
+Requirements:
 - Be factual and concise.
-- Do NOT mention the existence of an image.
-- Output STRICT JSON ONLY.
+- Do NOT mention that you saw an image; just describe the system.
+- Output STRICT JSON ONLY. No explanation, no markdown.
 
 Filename: {filename}
-                """.strip()
-            }
+                """.strip(),
+            },
         ]
     else:
         user_content = [
@@ -118,19 +126,19 @@ Filename: {filename}
                 "text": f"""
 You are ØynaWaterworksDocAI.
 
-This is an ENGINEERING DOCUMENT for Øyna Vassverk.
+The user has provided an ENGINEERING DOCUMENT for Øyna Vassverk (waterworks).
 
 Task:
-- Convert it into a structured Øyna AI knowledge module.
-- Extract core facts, structure, processes, risks, and relationships.
-- Use clear engineering language.
-- Output STRICT JSON ONLY.
+- Convert the following document into a structured Øyna AI knowledge module.
+- Capture the core facts, structure, and relationships.
+- Use clear, factual, engineering-oriented descriptions.
+- Output STRICT JSON ONLY. No explanation, no markdown.
 
-Filename: {filename}
+Document filename: {filename}
 
 Document content:
 {content}
-                """.strip()
+                """.strip(),
             }
         ]
 
@@ -139,55 +147,33 @@ Document content:
         messages=[
             {
                 "role": "system",
-                "content": "You convert Øyna waterworks engineering documents and diagrams into structured JSON knowledge modules."
+                "content": (
+                    "You convert Øyna waterworks engineering documents and diagrams into "
+                    "structured JSON knowledge modules compatible with downstream AI agents."
+                ),
             },
             {
                 "role": "user",
-                "content": user_content
-            }
-        ]
+                "content": user_content,
+            },
+        ],
     )
 
-    raw = response.choices[0].message.content
+    raw_content = response.choices[0].message.content
 
-    # Normalize to valid JSON
+    # Try to normalize to valid JSON
     try:
-        parsed = json.loads(raw)
+        parsed = json.loads(raw_content)
         return json.dumps(parsed, ensure_ascii=False, indent=2)
     except Exception:
+        # If the model ever returns non-JSON, wrap it in a simple structure
         fallback = {
             "module_id": "raw_ai_output",
             "source_filename": filename,
-            "error": "Model returned non-JSON content.",
-            "raw_content": raw
+            "error": "Model did not return valid JSON. Raw content preserved.",
+            "raw_content": raw_content,
         }
         return json.dumps(fallback, ensure_ascii=False, indent=2)
-
-
-# --------------------------
-# Process ONE file
-# --------------------------
-
-def process_file(file: Path):
-    print(f"Processing: {file}")
-
-    content = extract_content(file)
-    json_output = ai_convert_to_knowledge(content, file.name)
-
-    out_name = file.stem.lower().replace(" ", "_") + ".json"
-    out_file = OUT_DIR / out_name
-
-    with out_file.open("w", encoding="utf-8") as f:
-        f.write(json_output)
-
-    print(f" → Written knowledge file: {out_file}")
-
-    # Move processed raw file
-    dest = PROCESSED_DIR / file.name
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    file.rename(dest)
-
-    print(f" → Moved raw file to: {dest}\n")
 
 
 # --------------------------
@@ -198,20 +184,9 @@ def main():
     print("Scanning raw input files...\n")
 
     if not RAW_DIR.exists():
-        print(f"Directory not found: {RAW_DIR}")
+        print(f"No raw directory found at: {RAW_DIR}")
         return
 
-    # 1) If a specific file is provided via env, process ONLY that
-    single = os.getenv("RAW_SINGLE_FILE")
-    if single:
-        file = Path(single)
-        if not file.is_file():
-            print(f"RAW_SINGLE_FILE not found: {file}")
-            return
-        process_file(file)
-        return
-
-    # 2) Fallback: process first file found under RAW_DIR (one per run)
     any_files = False
 
     for file in RAW_DIR.rglob("*"):
@@ -219,11 +194,21 @@ def main():
             continue
 
         any_files = True
-        process_file(file)
-        break  # only one per run
+        print(f"Processing: {file}")
+
+        content = extract_content(file)
+        json_output = ai_convert_to_knowledge(content, file.name)
+
+        out_name = file.stem.lower().replace(" ", "_") + ".json"
+        out_file = OUT_DIR / out_name
+
+        with out_file.open("w", encoding="utf-8") as f:
+            f.write(json_output)
+
+        print(f" → Written knowledge file: {out_file}\n")
 
     if not any_files:
-        print("No files found in RAW folder.")
+        print(f"No files found under {RAW_DIR}, nothing to do.")
 
 
 if __name__ == "__main__":
