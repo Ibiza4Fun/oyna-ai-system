@@ -1,0 +1,33 @@
+name: Generate Knowledge Modules
+
+on:
+  push:
+    paths:
+      - "ai-input/raw/**"
+  workflow_dispatch:
+
+jobs:
+  generate-knowledge:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: pip install openai pypdf python-docx
+
+    - name: Run knowledge generator
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: python tools/generate_knowledge.py
+
+    - name: Commit generated knowledge
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "Auto-generate knowledge modules from raw input"
