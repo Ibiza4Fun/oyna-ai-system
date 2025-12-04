@@ -6,224 +6,240 @@ from pypdf import PdfReader
 import docx
 from openai import OpenAI
 
-# OpenAI client – API key from environment (OPENAI_API_KEY)
+# ============================================================
+# CONFIG
+# ============================================================
+
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# Directories
 RAW_DIR = Path("ai-input/raw")
-OUT_DIR = Path("knowledge")
 PROCESSED_DIR = Path("ai-input/processed")
+OUT_DIR = Path("knowledge")
 
-OUT_DIR.mkdir(exist_ok=True)
 PROCESSED_DIR.mkdir(exist_ok=True)
+OUT_DIR.mkdir(exist_ok=True)
 
 
-# --------------------------
-# Extract TEXT from documents
-# --------------------------
+# ============================================================
+# TEXT EXTRACTION
+# ============================================================
 
-def extract_text_pdf(path: Path) -> str:
-    reader = PdfReader(str(path))
+def extract_text_pdf(path: Path):
     text = ""
-    for page in reader.pages:
-        page_text = page.extract_text()
-        if page_text:
-            text += page_text + "\n"
+    try:
+        reader = PdfReader(str(path))
+        for page in reader.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text += page_text + "\n"
+    except Exception as e:
+        text += f"[PDF extraction error: {e}]"
     return text
 
 
-def extract_text_docx(path: Path) -> str:
-    doc = docx.Document(str(path))
-    return "\n".join([p.text for p in doc.paragraphs])
-
-
-def extract_text_generic(path: Path) -> str:
+def extract_text_docx(path: Path):
     try:
-        return path.read_text(errors="ignore")
-    except Exception:
+        doc = docx.Document(str(path))
+        return "\n".join([p.text for p in doc.paragraphs])
+    except:
         return ""
 
 
-def extract_image_base64(path: Path) -> str:
-    with path.open("rb") as imgf:
-        encoded = base64.b64encode(imgf.read()).decode("utf-8")
-
-    ext = path.suffix.lower()
-    if ext == ".png":
-        mime = "image/png"
-    else:
-        mime = "image/jpeg"
-
-    return f"data:{mime};base64,{encoded}"
+def extract_text_generic(path: Path):
+    try:
+        return path.read_text(errors="ignore")
+    except:
+        return ""
 
 
-def extract_content(path: Path) -> str:
-    ext = path.suffix.lower()
-
-    if ext == ".pdf":
-        return extract_text_pdf(path)
-
-    if ext == ".docx":
-        return extract_text_docx(path)
-
-    if ext in [".txt", ".md"]:
-        return extract_text_generic(path)
-
-    if ext in [".png", ".jpg", ".jpeg", ".webp"]:
-        return extract_image_base64(path)
-
-    return f"[UNSUPPORTED FILE TYPE: {path.name}]"
+def extract_image_base64(path: Path):
+    try:
+        with open(path, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode()
+        mime = "image/jpeg" if path.suffix.lower() in [".jpg", ".jpeg"] else "image/png"
+        return f"data:{mime};base64,{b64}"
+    except:
+        return None
 
 
-# --------------------------
+def extract_content(path: Path):
+    s = path.suffix.lower()
+
+    # Image handling
+    if s in [".png", ".jpg", ".jpeg"]:
+        return {"type": "image", "data": extract_image_base64(path)}
+
+    # PDF
+    if s == ".pdf":
+        return {"type": "text", "data": extract_text_pdf(path)}
+
+    # DOCX
+    if s == ".docx":
+        return {"type": "text", "data": extract_text_docx(path)}
+
+    # TXT / MD
+    if s in [".txt", ".md"]:
+        return {"type": "text", "data": extract_text_generic(path)}
+
+    # Fallback
+    return {"type": "text", "data": f"[UNSUPPORTED FILE TYPE: {path.name}]"}
+
+
+# ============================================================
+# CLEAN AND VALIDATE JSON
+# ============================================================
+
+def clean_json_output(raw_text: str):
+    """
+    Remove ```json fences and validate JSON.
+    """
+    text = raw_text.strip()
+
+    # Remove leading ```json or ```
+    if text.startswith("```"):
+        text = text.replace("```json", "").replace("```", "").strip()
+
+    # Remove trailing ```
+    if text.endswith("```"):
+        text = text[:-3].strip()
+
+    # Try parse JSON
+    try:
+        parsed = json.loads(text)
+        return json.dumps(parsed, indent=2, ensure_ascii=False)
+    except json.JSONDecodeError:
+        return None  # Invalid JSON
+
+
+# ============================================================
 # AI CONVERSION
-# --------------------------
+# ============================================================
 
-def ai_convert_to_knowledge(content: str, filename: str) -> str:
-    is_image = content.startswith("data:image")
+def ai_convert_to_knowledge(content, filename):
+    """
+    Uses OpenAI to convert document/image into structured JSON.
+    Ensures AI outputs VALID JSON ONLY.
+    """
 
-    if is_image:
-        user_content = [
-            {
-                "type": "image_url",
-                "image_url": {
-                    "url": content
-                }
-            },
-            {
-                "type": "text",
-                "text": f"""
+    system_prompt = """
 You are ØynaWaterworksDocAI.
+You convert engineering documents, photos, diagrams, and PDF files
+into structured JSON knowledge modules for an AI agent.
 
-The user has provided an ENGINEERING DIAGRAM / PHOTO.
+RULES:
+- ALWAYS output pure JSON.
+- NO markdown.
+- NO code blocks.
+- NO commentary.
+- No backticks.
+- No explanations.
+"""
 
-Task:
-- Inspect the image carefully.
-- Identify components, connections, flows, and technical details.
-- Convert the diagram into a structured Øyna AI knowledge module.
-
-Rules:
-- Be factual and concise.
-- Do NOT mention the existence of an image.
-- Output STRICT JSON ONLY.
-
-Filename: {filename}
-                """.strip()
-            }
-        ]
-    else:
-        user_content = [
-            {
-                "type": "text",
-                "text": f"""
-You are ØynaWaterworksDocAI.
-
-This is an ENGINEERING DOCUMENT for Øyna Vassverk.
-
-Task:
-- Convert it into a structured Øyna AI knowledge module.
-- Extract core facts, structure, processes, risks, and relationships.
-- Use clear engineering language.
-- Output STRICT JSON ONLY.
-
-Filename: {filename}
-
-Document content:
-{content}
-                """.strip()
-            }
-        ]
-
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {
-                "role": "system",
-                "content": "You convert Øyna waterworks engineering documents and diagrams into structured JSON knowledge modules."
-            },
+    # Select message content depending on type
+    if content["type"] == "image":
+        messages = [
+            {"role": "system", "content": system_prompt},
             {
                 "role": "user",
-                "content": user_content
+                "content": [
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": content["data"]}
+                    },
+                    {
+                        "type": "text",
+                        "text": (
+                            f"You are given an engineering-related image.\n"
+                            f"Convert it into a structured knowledge module.\n"
+                            f"Filename: {filename}\n"
+                        )
+                    }
+                ]
             }
         ]
+    else:
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": (
+                            f"Filename: {filename}\n"
+                            f"Document content:\n{content['data']}\n"
+                            f"Convert this into a structured knowledge module."
+                        )
+                    }
+                ]
+            }
+        ]
+
+    # Call OpenAI
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        temperature=0
     )
 
     raw = response.choices[0].message.content
+    cleaned = clean_json_output(raw)
 
-    # Normalize to valid JSON
-    try:
-        parsed = json.loads(raw)
-        return json.dumps(parsed, ensure_ascii=False, indent=2)
-    except Exception:
-        fallback = {
+    if cleaned is None:
+        # Return wrapper with raw output for debugging
+        return json.dumps({
             "module_id": "raw_ai_output",
             "source_filename": filename,
             "error": "Model returned non-JSON content.",
             "raw_content": raw
-        }
-        return json.dumps(fallback, ensure_ascii=False, indent=2)
+        }, indent=2, ensure_ascii=False)
+
+    return cleaned
 
 
-# --------------------------
-# Process ONE file
-# --------------------------
-
-def process_file(file: Path):
-    print(f"Processing: {file}")
-
-    content = extract_content(file)
-    json_output = ai_convert_to_knowledge(content, file.name)
-
-    out_name = file.stem.lower().replace(" ", "_") + ".json"
-    out_file = OUT_DIR / out_name
-
-    with out_file.open("w", encoding="utf-8") as f:
-        f.write(json_output)
-
-    print(f" → Written knowledge file: {out_file}")
-
-    # Move processed raw file
-    dest = PROCESSED_DIR / file.name
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    file.rename(dest)
-
-    print(f" → Moved raw file to: {dest}\n")
-
-
-# --------------------------
+# ============================================================
 # MAIN
-# --------------------------
+# ============================================================
 
 def main():
     print("Scanning raw input files...\n")
 
-    if not RAW_DIR.exists():
-        print(f"Directory not found: {RAW_DIR}")
+    # If batch workflow provides a specific file, process only that
+    single_file = os.getenv("RAW_SINGLE_FILE")
+
+    if single_file:
+        paths = [Path(single_file)]
+    else:
+        paths = [p for p in RAW_DIR.rglob("*") if p.is_file()]
+
+    if not paths:
+        print("No files to process.")
         return
 
-    # 1) If a specific file is provided via env, process ONLY that
-    single = os.getenv("RAW_SINGLE_FILE")
-    if single:
-        file = Path(single)
-        if not file.is_file():
-            print(f"RAW_SINGLE_FILE not found: {file}")
-            return
-        process_file(file)
-        return
+    for file in paths:
 
-    # 2) Fallback: process first file found under RAW_DIR (one per run)
-    any_files = False
+        print(f"Processing: {file}")
 
-    for file in RAW_DIR.rglob("*"):
-        if not file.is_file():
-            continue
+        content = extract_content(file)
+        json_output = ai_convert_to_knowledge(content, file.name)
 
-        any_files = True
-        process_file(file)
-        break  # only one per run
+        out_name = file.stem.lower().replace(" ", "_") + ".json"
+        out_file = OUT_DIR / out_name
 
-    if not any_files:
-        print("No files found in RAW folder.")
+        with out_file.open("w", encoding="utf-8") as f:
+            f.write(json_output)
+
+        print(f" → Written knowledge file: {out_file}")
+
+        # MOVE RAW FILE TO /processed/
+        destination = PROCESSED_DIR / file.name
+        file.rename(destination)
+
+        print(f" → Moved raw file to: {destination}\n")
+
+        # Process only 1 file unless batch workflow controls runs
+        if not single_file:
+            break
 
 
 if __name__ == "__main__":
