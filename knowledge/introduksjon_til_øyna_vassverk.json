@@ -1,0 +1,98 @@
+{
+  "filename": "Introduksjon til Øyna Vassverk.docx",
+  "title": "Introduksjon til Øyna Vassverk",
+  "description": "Øyna Vassverk er et frittstående, selvforsynt vannforsyningsanlegg som leverer drikkevann til hytteområdet på Øyna.",
+  "components": {
+    "water_source": {
+      "type": "grunnvannsbrønn",
+      "pump": {
+        "type": "nedsenket brønnpumpe",
+        "identifier": "P1"
+      }
+    },
+    "storage_tank": {
+      "capacity_liters": 6000,
+      "function": "buffer mellom råvann og distribusjon"
+    },
+    "pressure_system": {
+      "pump": {
+        "type": "trykkpumpe",
+        "identifier": "P2"
+      },
+      "pressure_tank": {
+        "capacity_liters": 150
+      }
+    },
+    "mechanical_control": {
+      "type": "tradisjonelt kontrollskap",
+      "components": [
+        "motorvern",
+        "kontaktorer",
+        "vannstandssensorer"
+      ],
+      "safety_features": [
+        "automatisk stopp ved lav vannstand",
+        "overbelastning"
+      ],
+      "pressure_switch": {
+        "type": "mekanisk",
+        "associated_with": "P2"
+      }
+    },
+    "iot_system": {
+      "modules": [
+        {
+          "type": "Shelly Pro EM50",
+          "function": "overvåker og kan styre trykkpumpen",
+          "control_device": "ABB-kontaktor"
+        },
+        {
+          "type": "Shelly 1 Gen4",
+          "function": "registrerer vannforbruk",
+          "meter": "Sensus 620"
+        }
+      ],
+      "communication": {
+        "protocol": "MQTT",
+        "network": "WiFi",
+        "device": "Ruckus R310"
+      },
+      "data_management": {
+        "platform": "Home Assistant",
+        "functions": [
+          "lagring",
+          "analyse",
+          "presentasjon"
+        ]
+      }
+    },
+    "logic_system": {
+      "type": "Node-RED",
+      "functions": [
+        "lekkasjedeteksjon",
+        "pumpesyklusanalyse",
+        "virtuell trykkmodellering",
+        "sikkerhetsrutiner"
+      ]
+    },
+    "data_storage": {
+      "type": "InfluxDB",
+      "function": "lagring av historiske data"
+    }
+  },
+  "characteristics": {
+    "type": "hybridanlegg",
+    "features": [
+      "klassisk vannverk med mekanisk robusthet",
+      "moderne overvåkning",
+      "automatisering",
+      "datadrevet innsikt"
+    ],
+    "benefits": [
+      "høy driftssikkerhet",
+      "fremtidsrettet grunnlag for videreutvikling",
+      "intelligent styring",
+      "prediktivt vedlikehold"
+    ]
+  }
+}
