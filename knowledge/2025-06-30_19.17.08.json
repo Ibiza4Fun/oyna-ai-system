@@ -1,0 +1,61 @@
+{
+  "filename": "2025-06-30 19.17.08.jpg",
+  "image_description": "Electrical control panel with various components.",
+  "components": [
+    {
+      "type": "circuit_breaker",
+      "label": "F01",
+      "position": "top left"
+    },
+    {
+      "type": "circuit_breaker",
+      "label": "Q01",
+      "position": "top left"
+    },
+    {
+      "type": "circuit_breaker",
+      "label": "K01",
+      "position": "top left"
+    },
+    {
+      "type": "circuit_breaker",
+      "label": "K02",
+      "position": "top left"
+    },
+    {
+      "type": "relay",
+      "label": "Q02",
+      "position": "top left"
+    },
+    {
+      "type": "relay",
+      "label": "KA1",
+      "position": "top right"
+    },
+    {
+      "type": "relay",
+      "label": "KA2",
+      "position": "top right"
+    },
+    {
+      "type": "terminal_block",
+      "position": "middle"
+    },
+    {
+      "type": "power_supply",
+      "position": "middle"
+    },
+    {
+      "type": "wiring",
+      "description": "Various colored wires connecting components",
+      "position": "bottom"
+    },
+    {
+      "type": "sealant",
+      "description": "Tube of sealant",
+      "position": "bottom"
+    }
+  ],
+  "layout": "vertical",
+  "notes": "The panel contains multiple circuit breakers and relays, with organized wiring and a terminal block."
+}
