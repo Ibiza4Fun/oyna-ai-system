@@ -1,0 +1,60 @@
+{
+  "filename": "2025-06-30 19.17.08.jpg",
+  "image_description": {
+    "type": "electrical_panel",
+    "components": [
+      {
+        "type": "circuit_breaker",
+        "label": "Q01",
+        "position": "top_row"
+      },
+      {
+        "type": "circuit_breaker",
+        "label": "Q02",
+        "position": "top_row"
+      },
+      {
+        "type": "contactor",
+        "label": "K01",
+        "position": "top_row"
+      },
+      {
+        "type": "contactor",
+        "label": "K02",
+        "position": "top_row"
+      },
+      {
+        "type": "relay",
+        "label": "KA1",
+        "position": "top_row"
+      },
+      {
+        "type": "relay",
+        "label": "KA2",
+        "position": "top_row"
+      },
+      {
+        "type": "terminal_block",
+        "position": "middle_row"
+      },
+      {
+        "type": "power_supply",
+        "label": "T01",
+        "position": "middle_row"
+      },
+      {
+        "type": "wiring",
+        "description": "various colored wires",
+        "position": "bottom_row"
+      },
+      {
+        "type": "tube",
+        "label": "sealant",
+        "position": "bottom_row"
+      }
+    ],
+    "layout": "vertical",
+    "enclosure": "metal",
+    "color_scheme": "gray"
+  }
+}
