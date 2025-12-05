@@ -1,31 +1,108 @@
 {
-  "version": "2.0",
-  "generated_at": "AUTO",
-  "system": {
-    "name": "Øyna Waterworks AI System",
-    "description": "Unified model integrating the API contract, digital twin, system topology, knowledge graph, and operational logic for the Øyna Waterworks AI Agent."
-  },
+  "manifest_version": "2.0",
+  "system_name": "Øyna Waterworks AI System",
+  "description": "Unified AI manifest integrating API contract, digital twin, master system model and knowledge graph for the Øyna Waterworks AI Agent.",
 
   "models": {
+    "knowledge_graph": {
+      "id": "oyna_knowledge_graph_v1",
+      "path": "models/v1/oyna_knowledge_graph_v1.json",
+      "description": "Semantic graph of all components, entities, flows, devices and causal relations"
+    },
     "api_contract": {
       "id": "oyna_api_contract_v1",
-      "source": "models/v1/oyna_ai_api_contract_v1.json"
+      "path": "models/v1/oyna_ai_api_contract_v1.json",
+      "description": "Public API structure for AI-to-system communication"
     },
     "digital_twin": {
       "id": "oyna_digital_twin_v1",
-      "source": "models/v1/oyna_digital_twin_v1.json"
+      "path": "models/v1/oyna_digital_twin_v1.json",
+      "description": "Virtual representation of physical, electrical, hydraulic and software layers"
     },
     "master_system_model": {
       "id": "oyna_master_system_model_v1",
-      "source": "models/v1/oyna_master_system_model_v1.json"
+      "path": "models/v1/oyna_master_system_model_v1.json",
+      "description": "Canonical model combining physical, electrical, I/O, software, safety and causal structure"
+    }
+  },
+
+  "relationships": {
+    "knowledge_graph_based_on": "master_system_model",
+    "digital_twin_derives_from": [
+      "master_system_model.physical_layer",
+      "master_system_model.electrical_layer",
+      "master_system_model.io_layer",
+      "master_system_model.software_layer"
+    ],
+    "api_contract_exposes": [
+      "digital_twin",
+      "master_system_model",
+      "knowledge_graph"
+    ],
+    "ai_runtime_requires": [
+      "api_contract",
+      "digital_twin",
+      "knowledge_graph"
+    ],
+
+    "pump_control": {
+      "depends_on": [
+        "api_contract",
+        "master_system_model",
+        "digital_twin"
+      ],
+      "uses_entities": [
+        "switch.pressure_pump_contactor",
+        "binary_sensor.pressure_pump_running",
+        "sensor.waterflow_total_liters"
+      ]
     },
-    "knowledge_graph": {
-      "id": "oyna_knowledge_graph_v1",
-      "source": "models/v1/oyna_knowledge_graph_v1.json"
+    "leak_detection": {
+      "depends_on": [
+        "master_system_model",
+        "knowledge_graph",
+        "influxdb"
+      ],
+      "uses_influx": [
+        "bucket:haos-oyna-waterflow"
+      ]
     },
-    "manifest_index": {
-      "id": "manifest_v1",
-      "source": "manifest.json"
+    "pressure_estimation": {
+      "depends_on": [
+        "digital_twin",
+        "flow dynamics",
+        "structured model relationships"
+      ]
+    }
+  },
+
+  "ai_runtime": {
+    "embedding_strategy": {
+      "chunk_size_chars": 1800,
+      "overlap_chars": 200,
+      "index_priority": [
+        "master_system_model",
+        "knowledge_graph",
+        "digital_twin",
+        "api_contract"
+      ],
+      "metadata_fields": [
+        "model_id",
+        "node_id",
+        "entity_type",
+        "layer",
+        "component_role"
+      ]
+    },
+    "prompt_router": {
+      "routes": {
+        "status": "api_contract.system.get_status",
+        "history": "api_contract.history.get_history",
+        "topology": "master_system_model",
+        "device_relations": "knowledge_graph",
+        "digital_twin_simulation": "digital_twin",
+        "control": "api_contract.control"
+      }
     }
   },
 
@@ -131,42 +208,10 @@
     }
   },
 
-  "relationships": {
-    "pump_control": {
-      "depends_on": [
-        "api_contract",
-        "master_system_model",
-        "digital_twin"
-      ],
-      "uses_entities": [
-        "switch.pressure_pump_contactor",
-        "binary_sensor.pressure_pump_running",
-        "sensor.waterflow_total_liters"
-      ]
-    },
-    "leak_detection": {
-      "depends_on": [
-        "master_system_model",
-        "knowledge_graph",
-        "influxdb"
-      ],
-      "uses_influx": [
-        "bucket:haos-oyna-waterflow"
-      ]
-    },
-    "pressure_estimation": {
-      "depends_on": [
-        "digital_twin",
-        "flow dynamics",
-        "structured model relationships"
-      ]
-    }
-  },
-
   "ai_agent_entrypoint": {
     "main_manifest": "ai_master_manifest_v2",
     "load_order": [
-      "manifest_index",
+      "manifest_v1",
       "api_contract",
       "digital_twin",
       "master_system_model",
@@ -177,5 +222,11 @@
       "all schemas satisfied",
       "relationships compiled"
     ]
+  },
+
+  "metadata": {
+    "generated_at": "2025-12-05T00:00:00+01:00",
+    "author": "Øyna Vassverk – AI System Builder",
+    "schema_version": "1.0"
   }
 }
