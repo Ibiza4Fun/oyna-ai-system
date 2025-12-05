@@ -41,15 +41,15 @@ def extract_text_docx(path: Path):
     try:
         doc = docx.Document(str(path))
         return "\n".join([p.text for p in doc.paragraphs])
-    except:
-        return ""
+    except Exception as e:
+        return f"[DOCX extraction error: {e}]"
 
 
 def extract_text_generic(path: Path):
     try:
         return path.read_text(errors="ignore")
-    except:
-        return ""
+    except Exception as e:
+        return f"[TEXT extraction error: {e}]"
 
 
 def extract_image_base64(path: Path):
@@ -58,30 +58,25 @@ def extract_image_base64(path: Path):
             b64 = base64.b64encode(f.read()).decode()
         mime = "image/jpeg" if path.suffix.lower() in [".jpg", ".jpeg"] else "image/png"
         return f"data:{mime};base64,{b64}"
-    except:
-        return None
+    except Exception as e:
+        return f"[IMAGE extraction error: {e}]"
 
 
 def extract_content(path: Path):
     s = path.suffix.lower()
 
-    # Image handling
     if s in [".png", ".jpg", ".jpeg"]:
         return {"type": "image", "data": extract_image_base64(path)}
 
-    # PDF
     if s == ".pdf":
         return {"type": "text", "data": extract_text_pdf(path)}
 
-    # DOCX
     if s == ".docx":
         return {"type": "text", "data": extract_text_docx(path)}
 
-    # TXT / MD
     if s in [".txt", ".md"]:
         return {"type": "text", "data": extract_text_generic(path)}
 
-    # Fallback
     return {"type": "text", "data": f"[UNSUPPORTED FILE TYPE: {path.name}]"}
 
 
@@ -90,25 +85,20 @@ def extract_content(path: Path):
 # ============================================================
 
 def clean_json_output(raw_text: str):
-    """
-    Remove ```json fences and validate JSON.
-    """
+    """Remove ``` fences and validate JSON."""
     text = raw_text.strip()
 
-    # Remove leading ```json or ```
     if text.startswith("```"):
         text = text.replace("```json", "").replace("```", "").strip()
 
-    # Remove trailing ```
     if text.endswith("```"):
         text = text[:-3].strip()
 
-    # Try parse JSON
     try:
         parsed = json.loads(text)
         return json.dumps(parsed, indent=2, ensure_ascii=False)
     except json.JSONDecodeError:
-        return None  # Invalid JSON
+        return None
 
 
 # ============================================================
@@ -116,44 +106,24 @@ def clean_json_output(raw_text: str):
 # ============================================================
 
 def ai_convert_to_knowledge(content, filename):
-    """
-    Uses OpenAI to convert document/image into structured JSON.
-    Ensures AI outputs VALID JSON ONLY.
-    """
-
     system_prompt = """
 You are ØynaWaterworksDocAI.
-You convert engineering documents, photos, diagrams, and PDF files
-into structured JSON knowledge modules for an AI agent.
-
-RULES:
-- ALWAYS output pure JSON.
-- NO markdown.
-- NO code blocks.
-- NO commentary.
-- No backticks.
-- No explanations.
+Convert documents and images into structured JSON.
+Rules:
+- Output pure JSON only.
+- No markdown.
+- No code blocks.
+- No commentary.
 """
 
-    # Select message content depending on type
     if content["type"] == "image":
         messages = [
             {"role": "system", "content": system_prompt},
             {
                 "role": "user",
                 "content": [
-                    {
-                        "type": "image_url",
-                        "image_url": {"url": content["data"]}
-                    },
-                    {
-                        "type": "text",
-                        "text": (
-                            f"You are given an engineering-related image.\n"
-                            f"Convert it into a structured knowledge module.\n"
-                            f"Filename: {filename}\n"
-                        )
-                    }
+                    {"type": "image_url", "image_url": {"url": content["data"]}},
+                    {"type": "text", "text": f"Filename: {filename}\nConvert image to structured JSON."}
                 ]
             }
         ]
@@ -163,19 +133,12 @@ RULES:
             {
                 "role": "user",
                 "content": [
-                    {
-                        "type": "text",
-                        "text": (
-                            f"Filename: {filename}\n"
-                            f"Document content:\n{content['data']}\n"
-                            f"Convert this into a structured knowledge module."
-                        )
-                    }
+                    {"type": "text",
+                     "text": f"Filename: {filename}\nDocument:\n{content['data']}\nConvert to structured JSON."}
                 ]
             }
         ]
 
-    # Call OpenAI
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=messages,
@@ -186,11 +149,10 @@ RULES:
     cleaned = clean_json_output(raw)
 
     if cleaned is None:
-        # Return wrapper with raw output for debugging
         return json.dumps({
             "module_id": "raw_ai_output",
             "source_filename": filename,
-            "error": "Model returned non-JSON content.",
+            "error": "Model returned invalid JSON.",
             "raw_content": raw
         }, indent=2, ensure_ascii=False)
 
@@ -198,26 +160,29 @@ RULES:
 
 
 # ============================================================
+# SAFE MOVE
+# ============================================================
+
+def move_with_overwrite(src: Path, dst: Path):
+    if dst.exists():
+        dst.unlink()  # ensure overwrite
+    src.rename(dst)
+
+
+# ============================================================
 # MAIN
 # ============================================================
 
 def main():
-    print("Scanning raw input files...\n")
+    print("Scanning ai-input/raw ...\n")
 
-    # If batch workflow provides a specific file, process only that
-    single_file = os.getenv("RAW_SINGLE_FILE")
-
-    if single_file:
-        paths = [Path(single_file)]
-    else:
-        paths = [p for p in RAW_DIR.rglob("*") if p.is_file()]
+    paths = [p for p in RAW_DIR.rglob("*") if p.is_file()]
 
     if not paths:
-        print("No files to process.")
+        print("No files found.")
         return
 
     for file in paths:
-
         print(f"Processing: {file}")
 
         content = extract_content(file)
@@ -229,17 +194,12 @@ def main():
         with out_file.open("w", encoding="utf-8") as f:
             f.write(json_output)
 
-        print(f" → Written knowledge file: {out_file}")
+        print(f" → Wrote knowledge: {out_file}")
 
-        # MOVE RAW FILE TO /processed/
         destination = PROCESSED_DIR / file.name
-        file.rename(destination)
+        move_with_overwrite(file, destination)
 
-        print(f" → Moved raw file to: {destination}\n")
-
-        # Process only 1 file unless batch workflow controls runs
-        if not single_file:
-            break
+        print(f" → Moved to: {destination}\n")
 
 
 if __name__ == "__main__":
