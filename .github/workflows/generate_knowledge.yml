@@ -1,9 +1,6 @@
 name: Generate Knowledge Modules
 
 on:
-  push:
-    paths:
-      - "ai-input/raw/**"
   workflow_dispatch:
 
 jobs:
