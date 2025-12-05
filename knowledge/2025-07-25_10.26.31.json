@@ -1,0 +1,32 @@
+{
+  "image": {
+    "filename": "2025-07-25 10.26.31.jpg",
+    "description": "A water pump system setup in a room. The system includes a blue pressure tank, a pump, and various pipes and fittings. The background features a yellow wall and some insulation material.",
+    "components": [
+      {
+        "type": "pressure_tank",
+        "color": "blue",
+        "location": "left"
+      },
+      {
+        "type": "pump",
+        "brand": "Grundfos",
+        "location": "center"
+      },
+      {
+        "type": "pipes",
+        "material": "plastic",
+        "color": "black and blue",
+        "location": "surrounding pump"
+      },
+      {
+        "type": "power_supply",
+        "location": "right"
+      }
+    ],
+    "environment": {
+      "wall_color": "yellow",
+      "floor_material": "gravel"
+    }
+  }
+}

@@ -1,0 +1,371 @@
+{
+  "filename": "2025-10-20_Kart for Hovedledningsnett Versjon 2.5.pdf",
+  "document": {
+    "version": "2.5",
+    "date": "2025-10-20",
+    "sections": [
+      {
+        "title": "Hovednett med stoppekraner",
+        "details": {
+          "drawn_by": "Jan Olav Helle",
+          "drawing_date": "05.02.25",
+          "additional_info": "Anders Storegjerde 13.05.25",
+          "updated": "21.10.25",
+          "stoppekraner": [
+            {
+              "number": 45,
+              "name": "Hove Ås"
+            },
+            {
+              "number": 44,
+              "name": "Hovland"
+            },
+            {
+              "number": 43,
+              "name": "Ødelien"
+            },
+            {
+              "number": 41,
+              "name": "Bremnes"
+            },
+            {
+              "number": 39,
+              "name": "Henden"
+            },
+            {
+              "number": 37,
+              "name": "Søgnen/Tveit"
+            },
+            {
+              "number": 36,
+              "name": "Olsen"
+            },
+            {
+              "number": 35,
+              "name": "Aase"
+            },
+            {
+              "number": 34,
+              "name": "Skaar/Rotnes"
+            },
+            {
+              "number": 33,
+              "name": "Huus"
+            },
+            {
+              "number": 32,
+              "name": "Rotnes",
+              "note": "IKKE MED"
+            },
+            {
+              "number": 30,
+              "name": "Berge Ø"
+            },
+            {
+              "number": 29,
+              "name": "Osland"
+            },
+            {
+              "number": 28,
+              "name": "Solbakken"
+            },
+            {
+              "number": 27,
+              "name": "Berge B"
+            },
+            {
+              "number": 26,
+              "name": "Thune"
+            },
+            {
+              "number": 25,
+              "name": "Løvik"
+            },
+            {
+              "number": 24,
+              "name": "Øygard"
+            },
+            {
+              "number": 23,
+              "name": "Helle"
+            },
+            {
+              "number": 22
+            },
+            {
+              "number": 21
+            },
+            {
+              "number": 20
+            },
+            {
+              "number": 19
+            },
+            {
+              "number": 17
+            },
+            {
+              "number": 15
+            },
+            {
+              "number": 13
+            },
+            {
+              "number": 11
+            },
+            {
+              "number": 9
+            },
+            {
+              "number": 8
+            },
+            {
+              "number": 7
+            },
+            {
+              "number": 6
+            },
+            {
+              "number": 5
+            },
+            {
+              "number": 4
+            },
+            {
+              "number": 3
+            },
+            {
+              "number": 2
+            },
+            {
+              "number": 1
+            },
+            {
+              "number": 14,
+              "note": "Fremtidig kran"
+            }
+          ]
+        }
+      },
+      {
+        "title": "Innledning",
+        "content": "Stoppekraner på hovednettet er marker med grønne X, mens stoppekranene på tilførselsledningene til hyttene er marker med røde X. Hovednettet er delt opp i segmenter, med totalt 14 stoppekraner. Dette betyr at hele forsyningsnettet ikke nødvendigvis må stenges ved en isolert feil."
+      },
+      {
+        "title": "Kommentarer",
+        "points": [
+          "Det er registrert 26 abonnenter i Øyna Vassverk.",
+          "Private stoppekraner er dokumentert for 24 av hyttene, hvorav fire av hyttene har to eller flere kraner. To hytter har ikke installert private stoppekraner.",
+          "Hovednettet har 14 stoppekraner. Tre av stoppekranene ligger i sjøen, og disse er merket med blåser. Nr 3 er ikke i bruk, men står i åpen posisjon, nr 5 må byttes ut med T-kopling og nr 6 er ikke installert.",
+          "Alle stoppekraner må merkes tydelig, både de som står på land, og de som ligger i sjøen.",
+          "Hovednettet er ikke en fullstendig sirkel. Det mangler et ledningssegment mellom stoppekranene 5 og 6. Dette betyr at hyttene ikke kan få vann fra både østre og vestre ring, slik det er tenkt."
+        ]
+      },
+      {
+        "title": "Plassering av Vassverkets stoppekraner",
+        "details": [
+          {
+            "number": 1,
+            "description": "Blå stoppekran installert i Pumpehuset, stopper vannforsyning mot Vaulen (Øst-Vest i sjøen)."
+          },
+          {
+            "number": 2,
+            "description": "I Vaulen, sør-øst for brygga til Skaar / Rotnes. Koplet til Blåse."
+          },
+          {
+            "number": 3,
+            "description": "Under terrassen til Hovland. Ikke i bruk."
+          },
+          {
+            "number": 4,
+            "description": "I flomålet nord-øst for hytta til Hovland."
+          },
+          {
+            "number": 5,
+            "description": "I sjøen, nord-vest for privat stoppekran for hytta til Søgnen / Tveit."
+          },
+          {
+            "number": 6,
+            "description": "Finnes ikke i dag. Skal installeres ved avgreining til Aase ifm. trekking av manglende ledningssegment mellom kran 5 og kran 7."
+          },
+          {
+            "number": 7,
+            "description": "I knutepunktet mellom Hovednettet og avgreining for hyttene til Aase og Huus."
+          },
+          {
+            "number": 8,
+            "description": "Hovedledning fra øst (kran 9) til vest (kran 7)."
+          },
+          {
+            "number": 9,
+            "description": "Ved hytta til Solbakken."
+          },
+          {
+            "number": 10,
+            "description": "I flomålet ved kaianlegget til Ness."
+          },
+          {
+            "number": 11,
+            "description": "Ved avtapping til Storegjerde."
+          },
+          {
+            "number": 12,
+            "description": "Ved østgående segment av ringnettet. Koplet til Blåse."
+          },
+          {
+            "number": 13,
+            "description": "Ved nordgående avtapping på østre segment av ringnettet. Koplet til samme Blåse som 12."
+          },
+          {
+            "number": 14,
+            "description": "Rød stoppekran installert i Pumpehuset, stopper vannforsyning mot Solbakken og Osland (Nord-Sør, midt over Øyna)."
+          }
+        ]
+      },
+      {
+        "title": "Plassering av medlemmenes private stoppekraner",
+        "members": [
+          {
+            "hytte_nr": 45,
+            "eier": "Hove Ås",
+            "beskrivelse": "Den er på baksiden av hytta, innenfor naustet. På nedsiden av en kvisthaug, ca 3 m fra vannet. Et plastrør stikker opp der med stoppekrana!"
+          },
+          {
+            "hytte_nr": 44,
+            "eier": "Hovland",
+            "beskrivelse": "Plassering av privat stoppekran for nr. 44 – Hovland. Plassert under hytta; sjå vedlegg. Tilførselsledning til 44 er ok. Stoppekran (hovudnett) rett under altan merka med X fungerer ikkje, truleg rusta fast (sjå vedlegg)"
+          },
+          {
+            "hytte_nr": 43,
+            "eier": "Ødelien",
+            "beskrivelse": "På hytta er stoppekran lagt under hytta, med inngang gjennom ‘dør’ i ribbeverk under hytta, mot sør-vest. På naustet ligg stoppekranen mellom bergvegg og naust, til høgre for dei store dørene. Ligg under vatn på flo sjø."
+          },
+          {
+            "hytte_nr": 41,
+            "eier": "Bremnes",
+            "beskrivelse": "Ok."
+          },
+          {
+            "hytte_nr": 39,
+            "eier": "Henden",
+            "beskrivelse": "Ok."
+          },
+          {
+            "hytte_nr": 37,
+            "eier": "Søgnen/Tveit",
+            "beskrivelse": "Stoppekran der hovedledning kommer opp fra sjøen. Denne er plassert i fjæra, nær grensemerket mot Huus. Ekstra stoppekran under hytta, der vannledning koples til fordelingsanlegget."
+          },
+          {
+            "hytte_nr": 36,
+            "eier": "Olsen",
+            "beskrivelse": "Vedlagt dokument viser plassering av privat stoppekran, kryss innenfor ring. Til info: vi stenger vann hver gang vi er borte fra hytten lengre enn dagstur."
+          },
+          {
+            "hytte_nr": 35,
+            "eier": "Aase",
+            "beskrivelse": "Inntaksledning til hytta er rett skissert på kartet. Der min inntaksledning ender på tegninga er det 3stk stoppekranar i kjeller under hytta, ein hovudkran, ein til hytte og ein til naust. Tilkomst til desse skjer via luke i grunnmur på hytta sin austvegg (vegg mot Stavang), lett synleg og nær det søraustlege hjørnet av hytta."
+          },
+          {
+            "hytte_nr": 34,
+            "eier": "Skaar/Rotnes",
+            "beskrivelse": "Stoppekranen vår er i sjøboden og kommer opp innerst på berget. Lett synlig. Det er mulig å få tilgang til den via en nøkkelboks."
+          },
+          {
+            "hytte_nr": 33,
+            "eier": "Huus",
+            "beskrivelse": "Privat stoppekran er plassert nær knutepunktet mellom Hovednettet og avgreining for hytta til Aase."
+          },
+          {
+            "hytte_nr": 30,
+            "eier": "Berge Ø",
+            "beskrivelse": "Stoppekran på høgre side av hytta, opp mot stien."
+          },
+          {
+            "hytte_nr": 29,
+            "eier": "Osland",
+            "beskrivelse": "Stoppekran er ved vanninntaket."
+          },
+          {
+            "hytte_nr": 28,
+            "eier": "Solbakken",
+            "beskrivelse": "Stoppekrana er plassert rett ved hytta under ei trekasse i det nordøstlige hjørnet. Berre å løfte av lokket for å komme til."
+          },
+          {
+            "hytte_nr": 27,
+            "eier": "Berge B",
+            "beskrivelse": "Vi har montert stoppekran før vannet går inn i hytta."
+          },
+          {
+            "hytte_nr": 26,
+            "eier": "Thune",
+            "beskrivelse": "Utvendig stoppekran ikke installert."
+          },
+          {
+            "hytte_nr": 25,
+            "eier": "Løvik",
+            "beskrivelse": "Stoppekran for hovedinntak på sørside av hytta. Egen ledning til kai, med stoppekran på nordsiden av hytta. Tappepunkt på kai. Før stoppekran hovedinntak Løvik sitter et T-stykke som viderekopler vann til hytte nr. 19 (Terje Ness)."
+          },
+          {
+            "hytte_nr": 24,
+            "eier": "Øygard",
+            "beskrivelse": "Krana er ca. midt på hyttas nordre side. Luke mot stien."
+          },
+          {
+            "hytte_nr": 23,
+            "eier": "Helle",
+            "beskrivelse": "Under altanen på hyttas vestside."
+          },
+          {
+            "hytte_nr": 22,
+            "eier": "Berntsen H K",
+            "beskrivelse": "Utvendig stoppekran ikke installert."
+          },
+          {
+            "hytte_nr": 21,
+            "eier": "Berntsen G",
+            "beskrivelse": "Utvendig stoppekran er montert under altan på austsida av hytta."
+          },
+          {
+            "hytte_nr": 20,
+            "eier": "Vie",
+            "beskrivelse": "Ok."
+          },
+          {
+            "hytte_nr": 19,
+            "eier": "Ness",
+            "beskrivelse": "Vann til hytta kommer via en avgreining (T-stykke) på ledningen inn til hytte nr. 25 (Løvik). T-stykket er installert før stoppekrana til Løvik."
+          },
+          {
+            "hytte_nr": 17,
+            "eier": "Hjelmeland",
+            "beskrivelse": "Ved avgreining fra hovedledning."
+          },
+          {
+            "hytte_nr": 15,
+            "eier": "Horne Totland",
+            "beskrivelse": "To Stoppekraner inn til min hytte. 1 stk. fra hovedledningen inn under min hytte. 1 stk under hytta."
+          },
+          {
+            "hytte_nr": 13,
+            "eier": "Storegjerde",
+            "beskrivelse": "Avgreiningen til hytta vår er rett teikna og der er kuleventil på vår leidning i avgreiningspuntet. Den har ikkje vore brukt på mange år og er sikkert treg. Den ligg litt under bakken. Skal merke den skikkelig, og grave den fram og lage ein liten isolert kum. Videre til hytta er leidninga isolert og med eiga stoppekran inne i hytta som blir stengt alltid når den ikkje er i bruk."
+          },
+          {
+            "hytte_nr": 9,
+            "eier": "Svidal",
+            "beskrivelse": "Hovedtilførsel til mi hytte, den har isolert hovedledning ned til sjø samt den er lagt varmekabel i den. Eg har montert stoppekran i hytta samt eg har stoppekran i sjø borte ved Ness slik som kartet viser."
+          }
+        ]
+      },
+      {
+        "title": "Oppsummering av anbefalte tiltak",
+        "recommendations": [
+          "På sikt fjerne Stoppekran 3.",
+          "Bytte ut Stoppekran 5, og sette inn T-stykke for avtapping til hytte 37 (Søgnen/Tveit) og viderekopling av hovednettet til Stoppekran 6.",
+          "Trekke ledning mellom Stoppekran 5 og Stoppekran 6.",
+          "Følge opp de to hyttene uten utvendig stoppekran."
+        ]
+      }
+    ]
+  }
+}
