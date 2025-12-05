@@ -1,0 +1,50 @@
+{
+  "image": {
+    "filename": "2025-07-25 10.27.00.jpg",
+    "description": {
+      "location": "indoor",
+      "features": [
+        {
+          "type": "electrical_panel",
+          "color": "gray",
+          "position": "left_wall"
+        },
+        {
+          "type": "yellow_case",
+          "color": "yellow",
+          "position": "left_wall"
+        },
+        {
+          "type": "ladder",
+          "material": "wood",
+          "position": "right_wall"
+        },
+        {
+          "type": "pipes",
+          "color": "red",
+          "position": "floor"
+        },
+        {
+          "type": "water_valve",
+          "color": "blue",
+          "position": "floor"
+        },
+        {
+          "type": "heating_unit",
+          "color": "white",
+          "position": "left_wall"
+        },
+        {
+          "type": "gravel",
+          "position": "floor"
+        },
+        {
+          "type": "concrete_slab",
+          "position": "floor"
+        }
+      ],
+      "lighting": "natural",
+      "view": "outdoor_visible"
+    }
+  }
+}

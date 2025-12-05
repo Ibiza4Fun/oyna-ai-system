@@ -1,0 +1,95 @@
+{
+  "document": {
+    "title": "KURSFORTEGNELSE",
+    "header": {
+      "company": "GARO",
+      "function": "Kombinert jordfeilbryter/automatsikring (kombiautomat) kobler ut strømmen ved jordfeil/overbelastning i det elektriske anlegget."
+    },
+    "instructions": "VEILEDNING HVIS KOMBIAUTOMATEN HAR KOBLET UT",
+    "sections": [
+      {
+        "punkt": "1",
+        "title": "Jordfeil",
+        "description": "Jordfeilbryter/automatsikring (kombiautomat) er en sikkerhetsinnretning som kobler ut strømmen ved jordfeil/overbelastning."
+      }
+    ],
+    "installer": {
+      "name": "",
+      "phone": ""
+    },
+    "table": {
+      "columns": [
+        "Nr",
+        "Kurs",
+        "Sikring",
+        "Amp",
+        "Karakter",
+        "Ledning",
+        "Lengde mm²",
+        "Forleg"
+      ],
+      "rows": [
+        {
+          "Nr": 1,
+          "Kurs": "Overbelastning",
+          "Sikring": "32",
+          "Amp": "OV",
+          "Karakter": "",
+          "Ledning": "",
+          "Lengde mm²": "",
+          "Forleg": ""
+        },
+        {
+          "Nr": 2,
+          "Kurs": "Jordfeilbryter m/mkabel",
+          "Sikring": "",
+          "Amp": "",
+          "Karakter": "",
+          "Ledning": "",
+          "Lengde mm²": "",
+          "Forleg": ""
+        },
+        {
+          "Nr": 3,
+          "Kurs": "Overspenningsvern",
+          "Sikring": "",
+          "Amp": "",
+          "Karakter": "",
+          "Ledning": "",
+          "Lengde mm²": "",
+          "Forleg": ""
+        },
+        {
+          "Nr": 4,
+          "Kurs": "Lys og stikkontakt",
+          "Sikring": "10",
+          "Amp": "",
+          "Karakter": "",
+          "Ledning": "",
+          "Lengde mm²": "",
+          "Forleg": ""
+        },
+        {
+          "Nr": 5,
+          "Kurs": "Pumpe i borehull",
+          "Sikring": "16",
+          "Amp": "",
+          "Karakter": "",
+          "Ledning": "",
+          "Lengde mm²": "",
+          "Forleg": ""
+        },
+        {
+          "Nr": 6,
+          "Kurs": "Pumpe for trykktank her",
+          "Sikring": "16",
+          "Amp": "",
+          "Karakter": "",
+          "Ledning": "",
+          "Lengde mm²": "",
+          "Forleg": ""
+        }
+      ]
+    }
+  }
+}

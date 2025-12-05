@@ -1,0 +1,33 @@
+{
+  "image": {
+    "filename": "2025-06-30 19.17.29.jpg",
+    "description": "An electrical distribution board with various circuit breakers and labels.",
+    "components": [
+      {
+        "position": 1,
+        "label": "OVERLASTVERN 32A"
+      },
+      {
+        "position": 2,
+        "label": "Unknown"
+      },
+      {
+        "position": 3,
+        "label": "Unknown"
+      },
+      {
+        "position": 4,
+        "label": "Faz 610A"
+      },
+      {
+        "position": 5,
+        "label": "Faz 610A"
+      },
+      {
+        "position": 6,
+        "label": "Faz 610A"
+      }
+    ],
+    "notes": "The board contains various circuit breakers and a main switch."
+  }
+}

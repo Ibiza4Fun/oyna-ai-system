@@ -1,0 +1,35 @@
+{
+  "image": {
+    "filename": "2025-07-25 10.26.16.jpg",
+    "elements": [
+      {
+        "type": "power_outlet",
+        "position": "left",
+        "details": {
+          "number_of_sockets": 4,
+          "color": "white",
+          "wiring": {
+            "type": "cable",
+            "color": "white"
+          }
+        }
+      },
+      {
+        "type": "device",
+        "position": "right",
+        "details": {
+          "label": "Trykkpumpe (P2)",
+          "color": "black",
+          "cable": {
+            "type": "power",
+            "color": "black"
+          }
+        }
+      }
+    ],
+    "background": {
+      "color": "yellow",
+      "texture": "smooth"
+    }
+  }
+}

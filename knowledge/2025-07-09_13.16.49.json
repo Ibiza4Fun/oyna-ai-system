@@ -1,0 +1,34 @@
+{
+  "image": {
+    "filename": "2025-07-09 13.16.49.jpg",
+    "description": "An image showing electrical components mounted on a wall. There is a white box with wires connected to it, a socket, and a yellow cable.",
+    "components": [
+      {
+        "type": "box",
+        "color": "white",
+        "wires": [
+          {
+            "color": "black",
+            "connection": "to socket"
+          },
+          {
+            "color": "yellow",
+            "connection": "to another device"
+          }
+        ]
+      },
+      {
+        "type": "socket",
+        "color": "white"
+      },
+      {
+        "type": "cable",
+        "color": "yellow"
+      }
+    ],
+    "background": {
+      "color": "yellow",
+      "material": "wall"
+    }
+  }
+}

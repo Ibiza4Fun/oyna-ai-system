@@ -1,0 +1,44 @@
+{
+  "image": {
+    "filename": "2025-07-09 13.17.04.jpg",
+    "description": "An interior view of a room with electrical equipment on the wall. The wall is painted yellow. There are two electrical panels, one gray with three buttons (red, yellow, green) and one black. There are also some cables and a small device mounted on the wall. A wooden fence is visible through an open door.",
+    "elements": [
+      {
+        "type": "wall",
+        "color": "yellow"
+      },
+      {
+        "type": "electrical_panel",
+        "color": "gray",
+        "buttons": [
+          {
+            "color": "red"
+          },
+          {
+            "color": "yellow"
+          },
+          {
+            "color": "green"
+          }
+        ]
+      },
+      {
+        "type": "electrical_panel",
+        "color": "black"
+      },
+      {
+        "type": "cable",
+        "quantity": "multiple"
+      },
+      {
+        "type": "device",
+        "color": "white"
+      },
+      {
+        "type": "door",
+        "material": "wood",
+        "visibility": "partially open"
+      }
+    ]
+  }
+}

@@ -1,0 +1,425 @@
+{
+  "document": {
+    "title": "Baseline for digital tvilling v1",
+    "sections": [
+      {
+        "title": "HOME ASSISTANT – Teknisk systemoversikt",
+        "subsections": [
+          {
+            "title": "Integrasjoner som er aktive / i bruk",
+            "details": {
+              "mqtt": "Mosquitto Addon",
+              "devices": [
+                {
+                  "name": "Shelly Pro EM50",
+                  "type": "pump control"
+                },
+                {
+                  "name": "Shelly 1 Gen4",
+                  "type": "flow meter"
+                }
+              ],
+              "transport": [
+                "Waterflow (LPM, total liters, pulser)",
+                "Pumpe strømstatus (P1/P2)",
+                "Kontactor-styring (P2)"
+              ],
+              "home_assistant_addons": [
+                "Mosquitto",
+                "InfluxDB",
+                "Node-RED",
+                "Samba",
+                "File Editor",
+                "Supervisor / OS"
+              ],
+              "ha_core_version": "2025.11.3"
+            }
+          },
+          {
+            "title": "Entities i Home Assistant (strukturert)",
+            "entities": {
+              "sensors": {
+                "flow": [
+                  "sensor.waterflow_lpm",
+                  "sensor.waterflow_total_liters"
+                ],
+                "pump_electrical_measurements": [
+                  "sensor.pressure_pump_voltage",
+                  "sensor.pressure_pump_current",
+                  "sensor.pressure_pump_active_power",
+                  "sensor.pressure_pump_energy",
+                  "binary_sensor.pressure_pump_running",
+                  "switch.pressure_pump_contactor"
+                ],
+                "virtual_sensors": [
+                  "sensor.virtual_pressure",
+                  "sensor.pressure_cutin_setting",
+                  "sensor.pressure_cutout_setting",
+                  "sensor.pump_cycle_liters",
+                  "sensor.pump_cycle_runtime_seconds",
+                  "sensor.leak_score",
+                  "sensor.night_usage_liters",
+                  "sensor.forecast_daily_usage",
+                  "sensor.flow_noise_index"
+                ]
+              },
+              "input_helpers": [
+                "input_number.virtual_pressure_cutin",
+                "input_number.virtual_pressure_cutout",
+                "input_boolean.pump_auto_mode",
+                "input_boolean.force_pump_shutdown"
+              ]
+            }
+          },
+          {
+            "title": "HA Dashboards",
+            "dashboards": [
+              {
+                "name": "Øyna – Waterflow dashboard",
+                "metrics": [
+                  "Flow LPM",
+                  "Total liters",
+                  "Pump cycles per day",
+                  "Pressure (virtual)",
+                  "Leak status",
+                  "Nightly usage"
+                ]
+              },
+              {
+                "name": "Øyna – Pump system",
+                "metrics": [
+                  "P1/P2 strøm",
+                  "P2 running status",
+                  "Cycle analysis",
+                  "Trykkberegning",
+                  "Cut-in/out justeringer"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "HA Automationer (per nå)",
+            "rules": [
+              {
+                "name": "Regel 1",
+                "description": "begrenset bruk – nesten all logikk ligger i Node-RED."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "NODE-RED – Teknisk systemoversikt",
+        "subsections": [
+          {
+            "title": "Hovedflows",
+            "flows": [
+              {
+                "name": "Flow 1 – Waterflow ingest",
+                "details": [
+                  "MQTT in",
+                  "parse",
+                  "store measurement in InfluxDB",
+                  "Flow LPM",
+                  "Flow total",
+                  "Timestamp adjustments",
+                  "Error handling",
+                  "Flow smoothing / denoising"
+                ]
+              },
+              {
+                "name": "Flow 2 – Pump cycle detection",
+                "details": [
+                  "EM50 strømprofil analyseres",
+                  "Start/stopp-identifikasjon",
+                  "Cycle-time",
+                  "Liters-per-cycle",
+                  "Power-normalization",
+                  "Pump overload detection"
+                ]
+              },
+              {
+                "name": "Flow 3 – Virtual pressure model",
+                "details": [
+                  "Beregner ‘virtuelt trykk’",
+                  "Oppdaterer HA sensor",
+                  "Tar hensyn til cut-in/out"
+                ]
+              },
+              {
+                "name": "Flow 4 – Leakage detection",
+                "details": [
+                  "Nattforbruk 02–06",
+                  "Sammenligner mot baseline",
+                  "Detekterer små og store lekkasjer",
+                  "Beregner leak_score",
+                  "Sender varsel til HA/Telegram",
+                  "Kan aktivere ‘force_pump_shutdown’"
+                ]
+              },
+              {
+                "name": "Flow 5 – InfluxDB aggregator",
+                "details": [
+                  "Buckets: minute / hourly / daily",
+                  "Flow, liters, cycle_count",
+                  "Pumper runtime",
+                  "Energi (fra EM50)"
+                ]
+              },
+              {
+                "name": "Flow 6 – Pump safety logic",
+                "details": [
+                  "Virker som en ‘digital failsafe’",
+                  "Avslår P2 når: leak_score > threshold, frostfare, for mange sykluser, unormalt strømforbruk, HA-manual shutdown aktiv"
+                ]
+              },
+              {
+                "name": "Flow 7 – MQTT command processing",
+                "details": [
+                  "Slår av/på kontaktor i EM50",
+                  "Sikrer debounce, retry, fallback",
+                  "Logger alle pump commands"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Node-RED teknologistack",
+            "details": {
+              "node_red_version": "v4.1.1",
+              "contributions": [
+                "node-red-contrib-influxdb2",
+                "node-red-contrib-home-assistant-websocket"
+              ],
+              "standard_function_nodes": "JS",
+              "context_storage": [
+                "last_pump_cycle",
+                "baseline_night_usage",
+                "cycle_history",
+                "pressure_model_state",
+                "leak_history"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "title": "INFLUXDB – Teknisk systemoversikt",
+        "subsections": [
+          {
+            "title": "Buckets",
+            "buckets": [
+              "haos-oyna-raw",
+              "haos-oyna-waterflow",
+              "haos-oyna-pressure",
+              "haos-oyna-leakage"
+            ]
+          },
+          {
+            "title": "Measurements (strukturert)",
+            "measurements": {
+              "flow": {
+                "name": "_waterflow",
+                "fields": [
+                  "lpm",
+                  "total_liters",
+                  "pulses"
+                ]
+              },
+              "pump_electrical_measurements": {
+                "name": "_em50",
+                "fields": [
+                  "voltage",
+                  "current",
+                  "active_power",
+                  "energy_total"
+                ]
+              },
+              "virtual_pressure": {
+                "name": "_pressure",
+                "fields": [
+                  "virtual_bar",
+                  "cycle_liters",
+                  "cycle_runtime"
+                ]
+              },
+              "leakage": {
+                "name": "_leak",
+                "fields": [
+                  "leak_score",
+                  "baseline_runtime",
+                  "night_usage"
+                ]
+              }
+            }
+          },
+          {
+            "title": "Retention",
+            "details": {
+              "default_retention": "forever",
+              "adjustable": true
+            }
+          }
+        ]
+      },
+      {
+        "title": "KOMMUNIKASJONSKANALER (MQTT / API / NETTVERK)",
+        "subsections": [
+          {
+            "title": "MQTT Topics",
+            "topics": {
+              "flow_meter": [
+                "shelly/1g4/liters_per_minute",
+                "shelly/1g4/total_liters",
+                "shelly/1g4/events"
+              ],
+              "pump": [
+                "shelly/proem50/status/em1:0",
+                "shelly/proem50/status/switch:0",
+                "shelly/proem50/command/switch:0"
+              ]
+            }
+          },
+          {
+            "title": "HA API / NR websockets",
+            "details": {
+              "ha_websocket_api": "tilgjengelig",
+              "node_red_ha_websocket_nodes": [
+                "event state",
+                "call service",
+                "get entity"
+              ]
+            }
+          },
+          {
+            "title": "Nettverk",
+            "details": {
+              "wifi": "Ruckus R310",
+              "transport": "MQTT over internett (TLS optional)",
+              "endpoint": "haos-oyna.duckdns.org",
+              "reverse_proxy": "Nginx Proxy Manager",
+              "routed_to": [
+                "HA (8123)",
+                "Mosquitto (1883/8883)"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "title": "SYSTEM STATE – Hvordan systemet fungerer akkurat nå",
+        "subsections": [
+          {
+            "title": "Styring",
+            "details": [
+              "P2 kan styres via mekanisk trykkbryter",
+              "gammelt kontrollskap (manual mode)",
+              "Shelly EM50 + ABB (AUTO mode)"
+            ]
+          },
+          {
+            "title": "Overvåkning",
+            "details": [
+              "Flow overvåkes 1:1 i HA og lagres i InfluxDB",
+              "Stromforbruk overvåkes og brukes til cycle detection",
+              "overload detection"
+            ]
+          },
+          {
+            "title": "Analyse",
+            "details": [
+              "Node-RED beregner: virtuelt trykk, lekkasje, sykluser, runtime, liters/cycle, frostfare"
+            ]
+          },
+          {
+            "title": "Digital twin status",
+            "details": [
+              "Systemet kan i dag: predikere lekkasjer, predikere trykkfall, gi nattforbruksanalyse, foreslå tiltak, stoppe pumpe ved fare"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "AI-MODELL INPUT – Strukturert format",
+        "structured_format": {
+          "home_assistant": {
+            "entities": {
+              "flow": [
+                "sensor.waterflow_lpm",
+                "sensor.waterflow_total_liters"
+              ],
+              "pump_power": [
+                "sensor.pressure_pump_voltage",
+                "sensor.pressure_pump_current",
+                "sensor.pressure_pump_active_power"
+              ],
+              "virtual": [
+                "sensor.virtual_pressure_bar",
+                "sensor.pump_cycle_liters",
+                "sensor.leak_score"
+              ],
+              "controls": [
+                "switch.pressure_pump_contactor"
+              ]
+            },
+            "input_helpers": [
+              "input_number.virtual_pressure_cutin",
+              "input_number.virtual_pressure_cutout"
+            ],
+            "integrations": [
+              "mqtt",
+              "shelly",
+              "node_red",
+              "influxdb"
+            ]
+          },
+          "node_red": {
+            "flows": [
+              "waterflow_ingest",
+              "cycle_detection",
+              "virtual_pressure",
+              "leakage",
+              "safety_shutdown"
+            ],
+            "context": [
+              "baseline",
+              "pressure_state",
+              "cycle_history"
+            ],
+            "mqtt_commands": [
+              "p2_on",
+              "p2_off"
+            ],
+            "functions": [
+              "frost_detection",
+              "pressure_model",
+              "leak_score"
+            ]
+          },
+          "influxdb": {
+            "buckets": [
+              "haos-oyna-raw",
+              "haos-oyna-waterflow",
+              "haos-oyna-pressure",
+              "haos-oyna-leakage"
+            ],
+            "measurements": [
+              "flow",
+              "pressure",
+              "leak",
+              "power"
+            ]
+          },
+          "communication": {
+            "mqtt_topics": [
+              "shelly/1g4/*",
+              "shelly/proem50/*"
+            ],
+            "wifi": "ruckus_r310",
+            "endpoint": "haos-oyna.duckdns.org"
+          }
+        }
+      }
+    ]
+  }
+}

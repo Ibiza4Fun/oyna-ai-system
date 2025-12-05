@@ -1,0 +1,35 @@
+{
+  "image": {
+    "filename": "2025-07-03 18.22.21.jpg",
+    "description": "An electrical panel with various components including circuit breakers and a digital meter.",
+    "components": [
+      {
+        "type": "circuit_breaker",
+        "label": "1",
+        "description": "OVERLASTVERN 32A"
+      },
+      {
+        "type": "circuit_breaker",
+        "label": "2",
+        "description": "Various circuit breakers"
+      },
+      {
+        "type": "circuit_breaker",
+        "label": "3",
+        "description": "Additional circuit breakers"
+      },
+      {
+        "type": "digital_meter",
+        "brand": "nuri",
+        "model": "MA304H3E",
+        "reading": "052841 kWh",
+        "voltage": "3x320V"
+      }
+    ],
+    "wiring": {
+      "type": "internal",
+      "description": "Wiring connections visible within the panel."
+    },
+    "panel_type": "electrical_distribution"
+  }
+}

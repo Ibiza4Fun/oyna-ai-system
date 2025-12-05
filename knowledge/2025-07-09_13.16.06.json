@@ -1,0 +1,42 @@
+{
+  "image": {
+    "filename": "2025-07-09 13.16.06.jpg",
+    "description": {
+      "building": {
+        "type": "shed",
+        "material": "wood",
+        "color": "gray",
+        "door": {
+          "type": "wooden",
+          "color": "brown"
+        },
+        "sign": {
+          "text": "ØYNA VASSVERK",
+          "material": "wood"
+        }
+      },
+      "surroundings": {
+        "vegetation": [
+          {
+            "type": "bushes",
+            "density": "dense"
+          },
+          {
+            "type": "grass",
+            "condition": "green"
+          }
+        ],
+        "landscape": {
+          "terrain": "sloped",
+          "features": [
+            "rocks",
+            "gravel"
+          ]
+        }
+      },
+      "weather": {
+        "sky": "cloudy"
+      }
+    }
+  }
+}

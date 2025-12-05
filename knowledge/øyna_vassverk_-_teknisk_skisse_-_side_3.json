@@ -1,0 +1,38 @@
+{
+  "filename": "Øyna Vassverk - Teknisk skisse - side 3.pdf",
+  "content": {
+    "components": [
+      {
+        "type": "Bryter",
+        "description": "Auto/Manuell Drift"
+      },
+      {
+        "type": "Trykkpumpe",
+        "model": "Shelly Pro EM 50"
+      },
+      {
+        "type": "Trykkpumpe",
+        "model": "Shelly 1 Gen4",
+        "addon": "m/Addon"
+      },
+      {
+        "type": "Flowmåler",
+        "description": "m/pulsgiver"
+      }
+    ],
+    "additional_info": [
+      {
+        "description": "Trykkpumpe komponenter"
+      },
+      {
+        "description": "Flowmåler komponenter"
+      },
+      {
+        "description": "Bård sin «databod»"
+      },
+      {
+        "description": "Hjemmesiden vår"
+      }
+    ]
+  }
+}

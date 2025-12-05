@@ -1,0 +1,44 @@
+{
+  "image": {
+    "filename": "2025-07-25 10.26.55.jpg",
+    "description": {
+      "environment": "indoor",
+      "floor_material": "gravel",
+      "items": [
+        {
+          "type": "plastic_bag",
+          "contents": "unknown"
+        },
+        {
+          "type": "string",
+          "color": "orange"
+        },
+        {
+          "type": "pipe",
+          "material": "plastic",
+          "color": "black",
+          "fittings": [
+            {
+              "type": "valve",
+              "color": "blue"
+            },
+            {
+              "type": "valve",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "type": "tool",
+          "name": "heat gun",
+          "color": "blue"
+        },
+        {
+          "type": "shoe",
+          "color": "black"
+        }
+      ],
+      "surface": "concrete"
+    }
+  }
+}

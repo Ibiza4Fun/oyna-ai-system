@@ -1,0 +1,55 @@
+{
+  "document": {
+    "header": {
+      "logo": "GRO",
+      "title": "KURSFORTEGNELSE"
+    },
+    "instructions": "VEILEDNING HVIS KOMBIAUTOMATEN HAR KOBLET UT. Punkt 1: Jordfeil. Installer: Jordfeilbryter/automatsikring (kombinert) koblet ut strømmen ved jordfeil/overbelastning i det elektriske anlegget. Kombinert jordfeilbryter/overstrømsbryter fører tidligere beredskapsinnstillinger ved feilstrømmer. Kombinertbrytere bør testes en gang pr. år. Trykk på testknappen for test. Den skal koble ut omgående.",
+    "anlegg": {
+      "tilkoblet_fase": "",
+      "innkaskabel": "",
+      "sikring": {
+        "styrke": "10 B",
+        "karakter": ""
+      },
+      "ledning": {
+        "lengde": "",
+        "forleggmåte": ""
+      }
+    },
+    "courses": [
+      {
+        "kurs": "F01",
+        "beskrivelse": "Styrestrøm"
+      },
+      {
+        "kurs": "G01",
+        "beskrivelse": "Motorvernbryter Pumpe i beredhol"
+      },
+      {
+        "kurs": "G02",
+        "beskrivelse": "Kantkontrol pumpe i beredhol"
+      },
+      {
+        "kurs": "K01",
+        "beskrivelse": "Kantkontrol pumpe her. Trykktank"
+      },
+      {
+        "kurs": "K02",
+        "beskrivelse": "Trykktank"
+      },
+      {
+        "kurs": "A01",
+        "beskrivelse": "Hjelperele"
+      },
+      {
+        "kurs": "A02",
+        "beskrivelse": "Hjelpestrøm"
+      }
+    ],
+    "footer": {
+      "rows": 30,
+      "additional_info": "101B1 515235312513"
+    }
+  }
+}

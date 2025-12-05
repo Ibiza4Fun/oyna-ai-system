@@ -1,0 +1,52 @@
+{
+  "image": {
+    "filename": "2025-06-30 19.17.24.jpg",
+    "description": "An electrical panel with various components.",
+    "components": [
+      {
+        "label": "1",
+        "type": "circuit breaker",
+        "description": "Overlastvern 32A"
+      },
+      {
+        "label": "2",
+        "type": "circuit breaker",
+        "description": "Model B"
+      },
+      {
+        "label": "3",
+        "type": "circuit breaker",
+        "description": "Model B"
+      },
+      {
+        "label": "4",
+        "type": "circuit breaker",
+        "description": "Model B"
+      },
+      {
+        "label": "5",
+        "type": "circuit breaker",
+        "description": "Model B"
+      },
+      {
+        "label": "6",
+        "type": "circuit breaker",
+        "description": "Model B"
+      }
+    ],
+    "meter": {
+      "brand": "nuri",
+      "model": "MA306HE",
+      "features": [
+        "M-Bus",
+        "QR code for identification"
+      ]
+    },
+    "additional_info": {
+      "papers": [
+        "User manual",
+        "Installation guide"
+      ]
+    }
+  }
+}

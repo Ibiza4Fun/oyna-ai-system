@@ -1,0 +1,280 @@
+{
+  "filename": "Elektro-tegning.docx",
+  "sections": [
+    {
+      "title": "Overordnet enkeltlinjeskjema",
+      "content": {
+        "from": "nettleverandør",
+        "to": "pumper og I/O",
+        "net": "NETT (230V IT/TT/TN)",
+        "components": [
+          {
+            "name": "Hovedsikring / Overlastvern",
+            "rating": "32A",
+            "type": "GARO",
+            "circuit": 1
+          },
+          {
+            "name": "Jordfeil/overspenningsbeskyttelse",
+            "type": "GARO",
+            "circuits": [
+              2,
+              3
+            ]
+          }
+        ],
+        "distributions": [
+          {
+            "circuit": 4,
+            "rating": "10A",
+            "description": "Lys, stikk, varmeovn, Ruckus, Shelly 1 Gen4 + HRI"
+          },
+          {
+            "circuit": 5,
+            "rating": "16A",
+            "description": "Gammelt kontrollskap → Q01 → K01 → Brønnpumpe P1"
+          },
+          {
+            "circuit": 6,
+            "rating": "16A",
+            "description": "Gammelt kontrollskap / Automasjonsskap → Q02/K02 + ABB → Trykkpumpe P2"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Hovedfordeling – GARO-skap",
+      "placement": "pumpehus, eget hvitt GARO-skap",
+      "function": "Hovedfordeling og vern",
+      "internal_line": {
+        "net_in": "Nett inn",
+        "components": [
+          {
+            "name": "Overlastvern",
+            "rating": "32A",
+            "circuit": 1
+          },
+          {
+            "name": "Jordfeilbryter",
+            "circuit": 2
+          },
+          {
+            "name": "Overspenningsvern",
+            "circuit": 3
+          },
+          {
+            "name": "Samleskinne",
+            "voltage": "230V",
+            "circuits": [
+              {
+                "circuit": 4,
+                "rating": "10A",
+                "description": "Lys/Stikk/Varmeovn/WiFi/Shelly 1 Gen4"
+              },
+              {
+                "circuit": 5,
+                "rating": "16A",
+                "description": "Gammelt kontrollskap (P1)"
+              },
+              {
+                "circuit": 6,
+                "rating": "16A",
+                "description": "Gammelt kontrollskap / Automasjonsskap (P2)"
+              }
+            ]
+          }
+        ]
+      },
+      "comments": [
+        "Kurs 4 forsyner alt småutstyr: varmeovn, Ruckus AP, eventuelle stikk og Shelly 1 Gen4.",
+        "Kurs 5 og 6 forsyner motorlast via motorvern/kontaktorer i neste tavle."
+      ]
+    },
+    {
+      "title": "Gammelt kontrollskap – motorstyring P1 og P2",
+      "placement": "Grått metallskap ved veggen (med lamper)",
+      "function": "Klassisk pumpestyring og sikkerhet (fail-safe)",
+      "supply_from_GARO": {
+        "circuit_5": {
+          "rating": "16A",
+          "connections": [
+            "L1, L2, L3, N, PE inn i kontrollskap",
+            "Q01 (motorvern P1)",
+            "K01 (kontaktor P1)",
+            "Kabel til brønnpumpe P1 (3-fase)"
+          ]
+        },
+        "circuit_6": {
+          "rating": "16A",
+          "connections": [
+            "L, N, PE inn i kontrollskap",
+            "Q02 (motorvern P2)",
+            "K02 (kontaktor P2)",
+            "Videre til automasjonsskap / ABB / P2"
+          ],
+          "note": "I praksis kan ABB-kontaktoren være plassert etter Q02/K02 eller i parallell med K02, men logisk er det: Kurs 6 → vern → kontaktor → ut til P2."
+        }
+      },
+      "control_power_and_auxiliary_circuits": {
+        "transformer": {
+          "name": "T01",
+          "supply": "Kurs 5/6 eller intern kobling",
+          "output": "T01 (trafo styrespenning, f.eks. 230V → 24V)",
+          "control_power_to": [
+            "KA1",
+            "KA2",
+            "Nivåsensor P1",
+            "Nivåsensor P2",
+            "Spoler på K01/K02"
+          ]
+        },
+        "relays": {
+          "KA1": "hjelprelé, interlock/stopp for P2 ved lavt nivå eller feilsituasjon.",
+          "KA2": "tilsvarende for P1 (tørrkjøringsvern)."
+        },
+        "logical_control_lines": {
+          "P1": {
+            "control_power": "Styrespenning",
+            "level_sensor": "Nivåsensor P1 (brønn OK?)",
+            "contacts": "lukkekontakt",
+            "output": "KA2 → K01-spole → P1 går"
+          },
+          "P2": {
+            "control_power": "Styrespenning",
+            "level_sensor": "Nivåsensor P2 (tank OK?)",
+            "contacts": "lukkekontakt",
+            "output": "KA1 → K02-spole → P2 kan gå"
+          }
+        },
+        "pressure_switch": "Trykkbryteren til P2 ligger i kraftveien/kontrollkretsen og bestemmer start/stopp ut fra trykk."
+      }
+    },
+    {
+      "title": "Nytt automasjonsskap – Shelly EM50 + ABB (P2 smartstyring)",
+      "placement": "Svart skap ved siden av gammelt kontrollskap",
+      "power_path_P2_AUTO_mode": {
+        "circuit": 6,
+        "rating": "16A",
+        "connections": [
+          "Q02 (motorvern P2) [i gammelt skap]",
+          "K02 (kontaktor P2, evt. alltid aktiv i AUTO)",
+          "ABB-kontaktor (i nytt automasjonsskap)",
+          "Stikkontakt / fast tilkobling",
+          "Trykkpumpe P2 (1-fase 230V)"
+        ]
+      },
+      "control_power_and_measurement": {
+        "Shelly_EM50": {
+          "description": "Måler strøm/effekt på kurs til P2 (og ev. P1).",
+          "relay_output": "styrer ABB-kontaktoren.",
+          "simple_line": {
+            "input": "230V fra Kurs 6",
+            "output": [
+              "Shelly EM50 (måling)",
+              "Utgang (relay) → ABB-spole",
+              "ABB hovedkontakter → P2 last"
+            ]
+          }
+        }
+      },
+      "auto_manual_switch": {
+        "description": "Bryter kobler om",
+        "modes": {
+          "MANUAL": "P2 styres kun av gammelt kontrollskap (K02/trykkswitch).",
+          "AUTO": "P2 må ha både: gammel logikk OK (K02 aktiv), Shelly EM50/ABB aktiv"
+        },
+        "logical": "Kraftvei: Q02 → K02 → (Auto/Manual) → ABB → P2"
+      }
+    },
+    {
+      "title": "Målesystem / I/O – Shelly 1 Gen4 + Sensus HRI",
+      "placement": "Egen liten sikringsboks med Shelly 1 Gen4 og LED’er.",
+      "power": {
+        "circuit": 4,
+        "rating": "10A",
+        "connections": [
+          "230V til liten kapsling",
+          "Shelly 1 Gen4 (L, N, PE)"
+        ]
+      },
+      "signal": {
+        "description": "puls fra vannmåler",
+        "components": [
+          "Sensus 620 mekanisk vannmåler",
+          "Sensus HRI pulse adapter (tørrkontaktsignal)",
+          "Pulse-inngang Shelly 1 Gen4 (S / IN)"
+        ]
+      },
+      "data_flow": {
+        "path": [
+          "Shelly 1 Gen4 → WiFi (Ruckus R310) → MQTT over internett → Mosquitto (HA)",
+          {
+            "Home_Assistant_sensor": [
+              "sensor.waterflow_lpm",
+              "sensor.waterflow_total_liters"
+            ]
+          },
+          {
+            "Node_RED": [
+              "Virtual pressure",
+              "Pump cycles",
+              "Leakage analysis"
+            ]
+          },
+          {
+            "InfluxDB": [
+              "Historikk per minutt/time/døgn"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Sammendrag i “ekte” enkeltlinjestil (kompakt)",
+      "summary": {
+        "net": "NETT",
+        "GARO": {
+          "main_protection": "32A hovedvern",
+          "RCD": "RCD + SPD",
+          "distributions": [
+            {
+              "circuit": 4,
+              "rating": "10A",
+              "description": "Lys/stikk/varmeovn/Ruckus/Shelly 1 Gen4"
+            },
+            {
+              "circuit": 5,
+              "rating": "16A",
+              "description": "Kontrollskap: Q01 → K01 → P1 (3-fase brønnpumpe)"
+            },
+            {
+              "circuit": 6,
+              "rating": "16A",
+              "description": "Kontrollskap: Q02 → K02 → Automasjonsskap: Shelly EM50 + ABB → P2"
+            }
+          ]
+        },
+        "control_power_and_level": {
+          "control_cabinet": {
+            "transformer": "T01",
+            "relays": [
+              "KA1",
+              "KA2"
+            ],
+            "level_sensors": [
+              "nivåsensor P1",
+              "nivåsensor P2"
+            ],
+            "control": "styring av K01/K02"
+          },
+          "automation_cabinet": {
+            "Shelly_EM50": "måler P1/P2, styrer ABB for P2, snakker MQTT"
+          }
+        },
+        "measurement": {
+          "Sensus": "Sensus 620 → HRI → Shelly 1 Gen4 (kurs 4) → WiFi → MQTT → HA/Node-RED/Influx"
+        }
+      }
+    }
+  ]
+}

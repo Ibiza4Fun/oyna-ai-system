@@ -1,0 +1,22 @@
+{
+  "image": {
+    "filename": "2025-07-11 16.20.39.jpg",
+    "description": {
+      "device": "Shelly",
+      "status_lights": {
+        "Power": "on",
+        "Wi-Fi": "on",
+        "LAN": "on",
+        "Out": "on",
+        "Count": "on"
+      },
+      "reset_button": true,
+      "enclosure": {
+        "material": "plastic",
+        "color": "light gray",
+        "brand": "Marlanvil",
+        "model": "S2.08"
+      }
+    }
+  }
+}

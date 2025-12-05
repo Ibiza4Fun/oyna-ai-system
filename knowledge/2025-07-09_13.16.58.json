@@ -1,0 +1,26 @@
+{
+  "image": {
+    "filename": "2025-07-09 13.16.58.jpg",
+    "description": "An electrical distribution box mounted on a wall with white conduit pipes.",
+    "elements": [
+      {
+        "type": "distribution_box",
+        "color": "white",
+        "position": "mounted on wall",
+        "features": {
+          "transparent_cover": true,
+          "switches": "multiple"
+        }
+      },
+      {
+        "type": "conduit_pipes",
+        "color": "white",
+        "layout": "horizontal and vertical"
+      }
+    ],
+    "background": {
+      "color": "yellow",
+      "texture": "smooth"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "image": {
+    "filename": "2025-07-03 18.22.27.jpg",
+    "description": "An electrical distribution board with various circuit breakers and safety devices.",
+    "components": [
+      {
+        "type": "circuit_breaker",
+        "brand": "Moeller",
+        "model": "PFIM-63/003-A",
+        "rating": "63A"
+      },
+      {
+        "type": "circuit_breaker",
+        "brand": "Moeller",
+        "model": "Z-FW-LP",
+        "rating": "220V-240V AC"
+      },
+      {
+        "type": "residual_current_device",
+        "brand": "Moeller",
+        "model": "V-20",
+        "rating": "20A"
+      },
+      {
+        "type": "circuit_breaker",
+        "brand": "FAZ",
+        "rating": "16A",
+        "quantity": 3
+      }
+    ],
+    "labels": [
+      {
+        "text": "OVERLOAD",
+        "position": "right"
+      }
+    ]
+  }
+}
