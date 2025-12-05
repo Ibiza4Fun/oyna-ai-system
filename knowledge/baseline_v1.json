@@ -1,0 +1,213 @@
+{
+  "filename": "Baseline v1.docx",
+  "title": "ØYNA VASSVERK – Komplett teknisk systembeskrivelse",
+  "version": "1.0",
+  "location": "Øyna (pumpehus og distribusjonsnett)",
+  "server": "Lillehagveien 99A (HA/Node-RED/InfluxDB)",
+  "function": "Leveranse av drikkevann til hyttefeltet på Øyna",
+  "overview": {
+    "components": [
+      "Brønnsanlegg (P1)",
+      "6000 L rentvannstank",
+      "Trykkpumpesystem (P2) m/ mekanisk trykkbryter",
+      "150 L trykktank (hydrofor)",
+      "Hovedvannmåler (Sensus 620 + HRI)",
+      "Distribusjonssystem til hytter",
+      "Elektriske installasjoner (2 skap)",
+      "Moderne automasjonssystem (Shelly / MQTT / HA / Node-RED)",
+      "Kommunikasjon (WiFi, MQTT over internett, Ruckus R310)"
+    ],
+    "features": "Hele anlegget støtter nå digital overvåkning og AI-basert tilstandsanalyse."
+  },
+  "water_process": {
+    "steps": [
+      {
+        "step": "Brønn → Brønnpumpe (P1)",
+        "description": "P1 er en 3-faset brønnpumpe styrt av motorvern Q01, kontaktor K01, interlock-relé (KA2), nivåsensor P1 (tørkjøringsvern).",
+        "function": "Pumper råvann fra brønn inn i 6000 L hovedtanken."
+      },
+      {
+        "step": "6000 L Hovedtank",
+        "description": "Ligger langs høyre vegg i pumpehuset, mottar vann kontinuerlig fra P1.",
+        "features": "Tanknivå reguleres av mekaniske nivåfølere koblet til gammelt kontrollskap. Tilsynelatende ingen digital nivåmåling, men nivå kan estimeres i AI-modellen."
+      },
+      {
+        "step": "Trykkpumpe (P2) → Trykktank (150 L)",
+        "description": "P2 er en 1-fase 230V trykkpumpe plassert på gulvet med mekanisk trykkswitch.",
+        "function": "P2 fyller et lukket 150 L trykkammer (hydrofor).",
+        "activation": "Aktiveres når trykk går under Cut-In, stopper ved Cut-Out.",
+        "control_systems": [
+          {
+            "type": "Gammel styring",
+            "components": [
+              "Motorvern Q02",
+              "Kontaktor K02",
+              "Interlock-relé KA1",
+              "Nivåsensor i hovedtank (P2-low-level)"
+            ]
+          },
+          {
+            "type": "Ny smartstyring (AUTO-modus)",
+            "components": [
+              "Shelly EM50 måler strøm og styrer ABB-kontaktor",
+              "Kan slås av/på via Home Assistant",
+              "MQTT-baserte kommandoer",
+              "Manual/Auto-bryter velger mellom gammelt og nytt system."
+            ]
+          }
+        ]
+      },
+      {
+        "step": "Fra trykktank til vannmåler (Sensus 620)",
+        "description": "Etter hydrofor går vannet gjennom hovedventil (manuell), Sensus 620 mekanisk vannmåler, HRI puls-sensor, Shelly 1 Gen4 pulse counter.",
+        "data": [
+          "liter pr. minutt (flow)",
+          "total liter",
+          "pulsfrekvens",
+          "pumpesykluser",
+          "lekkasjedeteksjon"
+        ]
+      },
+      {
+        "step": "Distribusjonssystem",
+        "description": "PE32/PE40 hovedledning går ut av pumpehuset og fordeles til alle hytter på feltet.",
+        "control": "Trykk og kapasitet styres av P2 + trykktank."
+      }
+    ]
+  },
+  "electrical_system": {
+    "main_distribution_board": {
+      "type": "GARO",
+      "components": [
+        "Overlastvern 32A",
+        "Jordfeilbryter",
+        "Overspenningsvern (lyn + transienter)",
+        "Lys og stikk (10A)",
+        "Varmeovn",
+        "WiFi Ruckus",
+        "Shelly 1 Gen4",
+        "Pumpe i borehøl (P1) – 16A",
+        "Pumpe trykktank (P2) – 16A"
+      ]
+    },
+    "old_control_board": {
+      "description": "Motorstyring",
+      "components": [
+        "Q01 – Motorvern for P1",
+        "K01 – Kontaktor for P1",
+        "Q02 – Motorvern for P2",
+        "K02 – Kontaktor for P2",
+        "KA1 – Relé, interlock P2",
+        "KA2 – Relé, interlock P1",
+        "T01 – Transformator til styrestrøm",
+        "Terminalrekker",
+        "2 stk nivåsensorer (P1 & P2)"
+      ],
+      "functions": [
+        "Fail-safe styring av pumper ved lavt vann",
+        "Overstrømsvern",
+        "Mekaniske sikkerhetsfunksjoner",
+        "Ikke digitalt system, men svært robust"
+      ]
+    },
+    "new_automation_board": {
+      "description": "Plassert ved siden av gammelt skap.",
+      "components": [
+        "Shelly Pro EM50",
+        "ABB-kontaktor for P2",
+        "Auto/Manual switch",
+        "Strømforsyning",
+        "Terminalrekker"
+      ],
+      "function": "Smartstyring av P2 i AUTO-modus, overvåkning av strømforbruk P1/P2, MQTT → Home Assistant, Node-RED logikk (sykluser, lekkasjer, trykkberegning), kan overstyre pumpa ved behov (frost, dry-run, lekkasje)."
+    }
+  },
+  "data_communication_system": {
+    "wifi_access_point": {
+      "type": "Ruckus R310",
+      "description": "Fast aksesspunkt i pumpehuset, tjener Shelly-enheter + evt. PC/mobil.",
+      "power_source": "Strøm fra kurs 4 (stikk)"
+    },
+    "iot_devices": [
+      {
+        "type": "Shelly Pro EM50",
+        "function": "Måler strøm P1/P2, styrer ABB-kontaktor (P2), MQTT → Mosquitto.",
+        "features": "Høy nøyaktighet."
+      },
+      {
+        "type": "Shelly 1 Gen4",
+        "function": "Telleinput fra Sensus HRI puls-sensor, sender LPM og total liters via MQTT.",
+        "features": "Meget stabil."
+      }
+    ],
+    "backend": {
+      "location": "Lillehagveien 99A",
+      "components": [
+        "Mosquitto Broker (HA Addon)",
+        "Home Assistant (haos-oyna.duckdns.org)",
+        "Node-RED (HA Addon)"
+      ],
+      "functions": [
+        "Visualisering og kontroll.",
+        "Flowcalculation",
+        "Pump cycle detection",
+        "Virtual pressure algorithm",
+        "Leak detection",
+        "Frost detection",
+        "Automatic pump cut-off logic",
+        "Data prep for dashboards"
+      ],
+      "historical_logging": [
+        "Waterflow",
+        "Pump cycles",
+        "Pressure model",
+        "Leak patterns",
+        "Runtime analytics"
+      ]
+    }
+  },
+  "algorithms_functions": {
+    "virtual_pressure_model": {
+      "description": "Fremstilt fra liters per pump cycle, cut-in / cut-out, lineariseringsprofil, runtime, historiske data.",
+      "output": "virtuelt trykk i bar, pumpesyklusparametere."
+    },
+    "leak_detection": {
+      "description": "Bruker nattforbruk 02–06, baseline vs. nåværende, pumpesykluser, flow-støy, runtime-anomali.",
+      "result": "lekkasjescore 0–1, alarm ved score > 0.8."
+    },
+    "pump_cycle_detection": {
+      "description": "Basert på EM50 strømprofil, nøyaktig start/stopp punkt, shell-støy filtrert.",
+      "usage": "Brukes til trykkmodell & lekkasjeanalyse."
+    },
+    "frost_protection": {
+      "description": "Basert på temperatur (HA/Node-RED sensor), romtemperatur (manual), flow null over lang tid + temp fall.",
+      "result": "Frostalarm, mulig automatisert: slå på varmeovn, holde P2 AV om nødvendig."
+    }
+  },
+  "safety_features": {
+    "old_system": {
+      "description": "Robust failsafe.",
+      "functions": [
+        "P1 stopper ved lav brønn.",
+        "P2 stopper ved lav tank.",
+        "Motorvern beskytter mot overstrøm.",
+        "Ka-reléer sikrer korrekt sekvens."
+      ]
+    },
+    "new_system": {
+      "description": "Smart failsafe.",
+      "functions": [
+        "Lekkasjealarm → slår av P2.",
+        "Frostfare → slår av P2.",
+        "Tørrkjøringsdeteksjon → slår av P2.",
+        "Overforbruk → varsel.",
+        "Manglende MQTT → fallback."
+      ]
+    }
+  },
+  "conclusion": {
+    "status": "Systemet består av et eldre, robust og fail-safe hydraulisk + elektrisk kontrollsystem kombinert med et moderne, IoT-basert analyse- og styringssystem.",
+    "assessment": "Teknisk sett er anlegget veldig godt egnet for digitalisering og AI-styring.",
+    "documentation": "Alle deler (vann, strøm, data) er dokumentert og forstått. Du har nå en komplett baseline-dokumentasjon."
+  }
+}

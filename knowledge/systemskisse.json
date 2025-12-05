@@ -1,0 +1,112 @@
+{
+  "filename": "Systemskisse.pdf",
+  "components": {
+    "pumps": [
+      {
+        "name": "Pump P2",
+        "type": "Pressure",
+        "features": [
+          "Pressure switch"
+        ]
+      },
+      {
+        "name": "Well Pump P1",
+        "type": "Well Pump"
+      }
+    ],
+    "water_tanks": [
+      {
+        "capacity": "6000L",
+        "type": "Pressure Water Tank"
+      },
+      {
+        "capacity": "200L",
+        "type": "Pressure Water Tank"
+      }
+    ],
+    "flow_meter": {
+      "model": "Axflow Sensus 620",
+      "type": "Waterflow meter"
+    },
+    "sensors": [
+      {
+        "model": "Sensus HRI",
+        "type": "Puls sensor"
+      },
+      {
+        "type": "Water level sensor",
+        "location": "P1"
+      },
+      {
+        "type": "Water level sensor",
+        "location": "P2"
+      }
+    ],
+    "control_devices": [
+      {
+        "model": "Shelly 1 Gen 4",
+        "type": "Smart Switch"
+      },
+      {
+        "model": "Shelly Addon",
+        "type": "Smart Switch"
+      },
+      {
+        "model": "Shelly Pro EM 50",
+        "type": "Energy Meter"
+      },
+      {
+        "model": "ABB Contactor",
+        "type": "Contactor"
+      }
+    ],
+    "control_cabinet": {
+      "generation": "older generation"
+    },
+    "switches": [
+      {
+        "type": "Auto/Manual switch",
+        "voltage": "230V",
+        "mode": "manual"
+      },
+      {
+        "type": "Auto/Manual switch",
+        "voltage": "230V",
+        "mode": "auto"
+      }
+    ],
+    "current_measurement": [
+      {
+        "type": "Current measurement"
+      },
+      {
+        "type": "Current measurement"
+      }
+    ],
+    "water_distribution": {
+      "description": "Water distribution system to all the cabins",
+      "type": "water pipe"
+    },
+    "network": {
+      "database": "InfluxDB",
+      "wifi_network": "Ruckus R310",
+      "mqtt": {
+        "type": "MQTT over Wifi",
+        "broker": "Moqsuitto Broker",
+        "over_internet": true
+      }
+    },
+    "home_automation": {
+      "platform": "Home Assistant",
+      "url": "haos-oyna.duckdns.org",
+      "addons": [
+        "Node-Red",
+        "Moqsuitto Broker"
+      ]
+    },
+    "location": {
+      "address": "Lillehagveien 93A",
+      "city": "Øyna"
+    }
+  }
+}
